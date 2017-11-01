@@ -8,10 +8,12 @@
     "ioredis": "^3.2.1",
     "jshint": "^2.9.5",
     "n": "^2.1.8",
+    "nodemon": "^1.12.1",
     "pg-promise": "^7.2.0"
   },
   "devDependencies": {},
   "scripts": {
+    "start": "node ./app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
