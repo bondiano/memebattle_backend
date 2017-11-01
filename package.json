@@ -1,0 +1,34 @@
+{
+  "name": "memebattle_back",
+  "version": "1.0.0",
+  "description": "Backend for membattle project",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.16.2",
+    "ioredis": "^3.2.1",
+    "jshint": "^2.9.5",
+    "n": "^2.1.8",
+    "pg-promise": "^7.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bondiano/memebattle_backend.git"
+  },
+  "keywords": [
+    "memes",
+    "express",
+    "nodejs",
+    "redis",
+    "postgre"
+  ],
+  "author": "membattle",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bondiano/memebattle_backend/issues"
+  },
+  "homepage": "https://github.com/bondiano/memebattle_backend#readme"
+}
