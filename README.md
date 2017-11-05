@@ -6,7 +6,7 @@
 # install dependencies
 npm install
 
-# create config/.env file
+# copy .env_s to .env and replace existed varibels whith your
 
 # start server on localhost:3000
 npm start
