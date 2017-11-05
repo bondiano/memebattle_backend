@@ -46,7 +46,7 @@ class UsersRepository {
         return this.db.oneOrNone('SELECT * FROM users WHERE name = $1', name);
     }
 
-        // Tries to find a user from name;
+    // Tries to find a user from email;
     findByEmail(email) {
         return this.db.oneOrNone('SELECT * FROM users WHERE email = $1', email);
     }
