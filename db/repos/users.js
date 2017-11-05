@@ -1,8 +1,6 @@
-const sql = require('../sql').users;
-
 /*
- This repository mixes hard-coded and dynamic SQL, primarily to show a diverse example of using both.
- */
+ Users table model
+*/
 
 class UsersRepository {
     constructor(db, pgp) {
@@ -15,27 +13,22 @@ class UsersRepository {
 
     // Creates the table;
     create() {
-        return this.db.none(sql.create);
-    }
-
-    // Initializes the table with some user records, and return their id-s;
-    init() {
-        return this.db.map(sql.init, [], row => row.id);
+        return this.db.none('CREATE TABLE users(id serial PRIMARY KEY, username text NOT NULL, password text NOT NULL, email text NOT NULL, email_checked boolean DEFAULT false, profile_id serial)');
     }
 
     // Drops the table;
     drop() {
-        return this.db.none(sql.drop);
+        return this.db.none('DROP TABLE users');
     }
 
     // Removes all records from the table;
     empty() {
-        return this.db.none(sql.empty);
+        return this.db.none('TRUNCATE TABLE users CASCADE');
     }
 
     // Adds a new user, and returns the new object;
-    add(name) {
-        return this.db.one(sql.add, name);
+    add(username, password, email) {
+        return this.db.one('INSERT INTO users (username, password, email) VALUES($1, $2, $3)', username, password, email);
     }
 
     // Tries to delete a user by id, and returns the number of records deleted;
@@ -53,6 +46,11 @@ class UsersRepository {
         return this.db.oneOrNone('SELECT * FROM users WHERE name = $1', name);
     }
 
+        // Tries to find a user from name;
+    findByEmail(email) {
+        return this.db.oneOrNone('SELECT * FROM users WHERE email = $1', email);
+    }
+
     // Returns all user records;
     all() {
         return this.db.any('SELECT * FROM users');
@@ -60,7 +58,7 @@ class UsersRepository {
 
     // Returns the total number of users;
     total() {
-        return this.db.one('SELECT count(*) FROM users', [], a => +a.count);
+        return this.db.one('SELECT count(*) FROMhis repository  users', [], a => +a.count);
     }
 }
 

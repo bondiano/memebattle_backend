@@ -13,6 +13,7 @@ const logger = morgen('combined');
 app.use(logger);
 
 GET('/users/create', () => pgdb.users.create());
+GET('/users/drop', () => pgdb.users.drop());
 
 // Generic GET handler;
 function GET(url, handler) {

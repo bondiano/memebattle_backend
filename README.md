@@ -6,12 +6,12 @@
 # install dependencies
 npm install
 
-# copy .env_s to .env and replace existed varibels whith your
+# copy .env_s to .env and replace existed variables whith your
 
-# start server on localhost:3000
+# start server
 npm start
 
 # use nodemon for start serve with hot reload
-nodemon app.js
+npm run dev
 
 ```
