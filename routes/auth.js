@@ -29,10 +29,10 @@ module.exports = (app, db) => {
             .catch(error => {
                 let message = '';
                 if(error.constraint === 'users_username_key'){
-                    message = 'User whith this username alrady exist';
+                    message = 'User with this username already exists';
                 } 
                 if(error.constraint === 'users_email_key'){
-                    message = 'User whith this email alrady exist';
+                    message = 'User with this username already exists';
                 }
                 res.json({
                     success: false,

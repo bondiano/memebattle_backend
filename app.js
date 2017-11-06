@@ -14,11 +14,21 @@ const logger = morgan('combined');
 
 /* Midlware use section */
 app.use(logger);
+app.use(require('express-promise')());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 /* Set up app routes */ 
 require('./routes')(app, pgdb);
+
+/* Error handlers */
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+  });
 
 /* App section */
 app.listen(port, function () {
