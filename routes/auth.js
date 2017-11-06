@@ -19,14 +19,24 @@ module.exports = (app, db) => {
                 password: req.body.password,
                 email: req.body.email
             };
-            db.users.add(newUser.username, newUser.password, newUser.email).then(data => {
+            db.users.add(newUser.username, newUser.password, newUser.email)
+            .then(data => {
                 res.json({
-                    success: true
+                    success: true,
+                    jwt: ''
                 });
             })
             .catch(error => {
+                let message = '';
+                if(error.constraint === 'users_username_key'){
+                    message = 'User whith this username alrady exist';
+                } 
+                if(error.constraint === 'users_email_key'){
+                    message = 'User whith this email alrady exist';
+                }
                 res.json({
                     success: false,
+                    message: message,
                     error: error.message || error
                 });
             });
