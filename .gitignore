@@ -3,3 +3,4 @@ npm-debug.log
 config/.env
 db/errors.log
 .idea
+package-lock.json
