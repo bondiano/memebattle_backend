@@ -4,19 +4,23 @@ const port = process.env.SERVER_PORT;
 
 /* Packages require section */
 const express = require('express');
-const morgen = require('morgan');
+const morgan = require('morgan');
 const pgdb = require('./db/pg-db');
+const bodyParser = require('body-parser');
 
 /* Middleware init section */
 const app = express();
-const logger = morgen('combined');
+const logger = morgan('combined');
 
 /* Midlware use section */
 app.use(logger);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
-/* Set up app routers */ 
+/* Set up app routes */ 
 require('./routes')(app, pgdb);
 
+/* App section */
 app.listen(port, function () {
-  console.log(`Example app listening on port ${port}!`);
+  console.log(`App listening on port ${port}!`);
 });

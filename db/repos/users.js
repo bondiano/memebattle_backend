@@ -1,14 +1,12 @@
 /*
  Users table model
 */
+const bcrypt = require('bcrypt');
 
 class UsersRepository {
     constructor(db, pgp) {
         this.db = db;
         this.pgp = pgp;
-
-        // set-up all ColumnSet objects, if needed:
-        this.cs = createColumnsets(pgp);
     }
 
     // Creates the table;
@@ -18,11 +16,11 @@ class UsersRepository {
             username text UNIQUE NOT NULL, 
             password text NOT NULL, 
             email text UNIQUE NOT NULL, 
-            email_checked boolean DEFAULT , 
+            email_checked boolean DEFAULT false, 
             registred_at timestamp NOT NULL, 
             profile_id serial UNIQUE NOT NULL
         );*/
-        return this.db.none('CREATE TABLE users(id serial PRIMARY KEY, username text UNIQUE NOT NULL, password text NOT NULL, email text UNIQUE NOT NULL, email_checked boolean DEFAULT false, registred_at timestamp NOT NULL, profile_id serial UNIQUE NOT NULL)');
+        return this.db.none('CREATE TABLE users(id serial PRIMARY KEY, username text UNIQUE NOT NULL, password text NOT NULL, email text UNIQUE NOT NULL, email_checked boolean DEFAULT false, registred_at timestamp DEFAULT now(), profile_id serial UNIQUE NOT NULL)');
     }
 
     // Drops the table;
@@ -37,7 +35,9 @@ class UsersRepository {
 
     // Adds a new user, and returns the new object;
     add(username, password, email) {
-        return this.db.one('INSERT INTO users (username, password, email) VALUES($1, $2, $3)', username, password, email);
+        const saltRounds = 10;
+        password = bcrypt.hashSync(password, saltRounds)
+        return this.db.any(`INSERT INTO users(username, password, email) VALUES('${username}', '${password}', '${email}')`);
     }
 
     // Tries to delete a user by id, and returns the number of records deleted;
@@ -51,8 +51,8 @@ class UsersRepository {
     }
 
     // Tries to find a user from name;
-    findByName(name) {
-        return this.db.oneOrNone('SELECT * FROM users WHERE name = $1', name);
+    findByUsername(username) {
+        return this.db.oneOrNone('SELECT * FROM users WHERE username = $1', username);
     }
 
     // Tries to find a user from email;
@@ -69,25 +69,6 @@ class UsersRepository {
     total() {
         return this.db.one('SELECT count(*) FROMhis repository  users', [], a => +a.count);
     }
-}
-
-//////////////////////////////////////////////////////////
-// showing how to statically initialize ColumnSet objects
-
-let cs; // ColumnSet objects static namespace
-
-const createColumnsets = pgp => {
-    // create all ColumnSet objects only once:
-    if (!cs) {
-        cs = {};
-        // Type TableName is useful when schema isn't default, otherwise you can
-        // just pass in a string for the table name;
-        const table = new pgp.helpers.TableName({table: 'users', schema: 'public'});
-
-        cs.insert = new pgp.helpers.ColumnSet(['name'], {table});
-        cs.update = cs.insert.extend(['?id']);
-    }
-    return cs;
 }
 
 module.exports = UsersRepository;
