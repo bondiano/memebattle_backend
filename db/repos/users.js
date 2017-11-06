@@ -13,7 +13,16 @@ class UsersRepository {
 
     // Creates the table;
     create() {
-        return this.db.none('CREATE TABLE users(id serial PRIMARY KEY, username text NOT NULL, password text NOT NULL, email text NOT NULL, email_checked boolean DEFAULT false, profile_id serial)');
+        /*CREATE TABLE users(
+            id serial PRIMARY KEY, 
+            username text UNIQUE NOT NULL, 
+            password text NOT NULL, 
+            email text UNIQUE NOT NULL, 
+            email_checked boolean DEFAULT , 
+            registred_at timestamp NOT NULL, 
+            profile_id serial UNIQUE NOT NULL
+        );*/
+        return this.db.none('CREATE TABLE users(id serial PRIMARY KEY, username text UNIQUE NOT NULL, password text NOT NULL, email text UNIQUE NOT NULL, email_checked boolean DEFAULT false, registred_at timestamp NOT NULL, profile_id serial UNIQUE NOT NULL)');
     }
 
     // Drops the table;
@@ -67,7 +76,7 @@ class UsersRepository {
 
 let cs; // ColumnSet objects static namespace
 
-function createColumnsets(pgp) {
+const createColumnsets = pgp => {
     // create all ColumnSet objects only once:
     if (!cs) {
         cs = {};
