@@ -36,7 +36,7 @@ class UsersRepository {
     // Adds a new user, and returns the new object;
     add(username, password, email) {
         const saltRounds = 10;
-        password = bcrypt.hashSync(password, saltRounds)
+        password = bcrypt.hashSync(password, saltRounds);
         return this.db.any(`INSERT INTO users(username, password, email) VALUES('${username}', '${password}', '${email}')`);
     }
 

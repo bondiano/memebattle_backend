@@ -2,12 +2,12 @@ var jwt = require('express-jwt');
 /*  
 site/auth/* route:
     auth/login 
-    auth/signin
+    auth/signup
     auth/logout
 */
 
 module.exports = (app, db) => {
-    app.post('/auth/signin', (req, res) => {
+    app.post('/auth/signup', (req, res) => {
         if(!req.body.username || !req.body.email || !req.body.password){
             res.json({
                 success: false,
@@ -21,8 +21,7 @@ module.exports = (app, db) => {
             };
             db.users.add(newUser.username, newUser.password, newUser.email).then(data => {
                 res.json({
-                    success: true,
-                    data
+                    success: true
                 });
             })
             .catch(error => {
