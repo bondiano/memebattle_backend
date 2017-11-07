@@ -67,7 +67,7 @@ module.exports = (app, db) => {
 
     app.post('/auth/signup', (req, res) => {
         if(!req.body.username || !req.body.email || !req.body.password){
-            res.status(400).json({
+            res.json({
                 success: false,
                 message: 'Please enter username, email and password.'
             });
@@ -93,7 +93,7 @@ module.exports = (app, db) => {
                 if(error.constraint === 'users_email_key'){
                     message = 'User with this username already exists';
                 }
-                res.status(400).json({
+                res.json({
                     success: false,
                     message: message,
                     error: error.message || error
