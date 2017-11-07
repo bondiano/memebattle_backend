@@ -1,7 +1,11 @@
 /* Config load section */
 require('dotenv').config({path: './config/.env'});
 const port = process.env.SERVER_PORT;
-//process.env.NODE_ENV = 'production';
+
+// for dev .env row with IS_PRODUCTION must be empty
+if(process.env.IS_PRODUCTION){
+  process.env.NODE_ENV = 'production';
+}
 
 /* Packages require section */
 const express = require('express');
