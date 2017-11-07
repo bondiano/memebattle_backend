@@ -38,6 +38,11 @@ module.exports = (app, db) => {
                                 message: 'Good job.',
                                 data: token });
                           });
+                    }).catch(error => {
+                        res.status(400).json({
+                            success: false,
+                            error: error.message || error
+                        });
                     });
 
                 } else {
@@ -46,8 +51,13 @@ module.exports = (app, db) => {
                         message: 'Please enter valid password.'
                     });
                 }
-            }
-            );
+            })
+            .catch(error => {
+                res.status(400).json({
+                    success: false,
+                    error: error.message || error
+                });
+            });
         }
     });
 
