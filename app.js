@@ -1,6 +1,7 @@
 /* Config load section */
 require('dotenv').config({path: './config/.env'});
 const port = process.env.SERVER_PORT;
+//process.env.NODE_ENV = 'production';
 
 /* Packages require section */
 const express = require('express');

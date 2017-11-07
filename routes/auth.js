@@ -1,12 +1,16 @@
 var jwt = require('express-jwt');
 /*  
 site/auth/* route:
-    auth/login 
-    auth/signup
-    auth/logout
+auth/login POST
+auth/signup POST
+auth/logout GET
 */
 
 module.exports = (app, db) => {
+    app.post('/auth/login', (req, res) => {
+    
+    });
+
     app.post('/auth/signup', (req, res) => {
         if(!req.body.username || !req.body.email || !req.body.password){
             res.json({
@@ -27,7 +31,7 @@ module.exports = (app, db) => {
                 });
             })
             .catch(error => {
-                let message = '';
+                let message = 'Unexpectedly error';
                 if(error.constraint === 'users_username_key'){
                     message = 'User with this username already exists';
                 } 
@@ -41,5 +45,9 @@ module.exports = (app, db) => {
                 });
             });
         }
+    });
+
+    app.get('/auth/logout', (req, res) => {
+
     });
 };
