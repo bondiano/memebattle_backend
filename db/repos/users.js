@@ -38,9 +38,8 @@ class UsersRepository {
 
     // Adds a new user, and returns the new object;
     add(username, password, email) {
-        bcrypt.hash(password, this.saltRounds).then(function(hash) {
-            return this.db.one(`INSERT INTO users(username, password, email) VALUES('${username}', '${hash}', '${email}')`);
-        });
+        return bcrypt.hash(password, this.saltRounds).then((hash) =>
+            this.db.any(`INSERT INTO users(username, password, email) VALUES('${username}', '${hash}', '${email}')`));
     }
 
     // Tries to delete a user by id, and returns the number of records deleted;
@@ -78,18 +77,25 @@ class UsersRepository {
         return this.db.oneOrNone('SELECT password FROM users WHERE username = $1', username);
     }
 
+    // Check user password
+    isValidUserPassword(username, password){
+        return this.getUserPassword(username).then(data => 
+            bcrypt.compare(password, data.password).then(res => res));
+    }
+
     // Set password
     setNewPassword(username, newPassword){
         this.getUserPassword(username).then(data => {
-            bcrypt.compare(newPassword, data).then(function(res) {
+            bcrypt.compare(newPassword, data).then((res) => {
                 if(res){ // res == true
-                    bcrypt.hash(newPassword, this.saltRounds).then(function(hash) {
+                    bcrypt.hash(newPassword, this.saltRounds).then((hash) => {
                         return this.none(`UPDATE users SET password = '${hash}' where username = '${username}'`);
                     });
+                } else {
+                    return false;
                 }
             });
-        }
-        )
+        })
         .catch(error => error);
     }
 

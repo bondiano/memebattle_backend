@@ -8,7 +8,29 @@ auth/logout GET
 
 module.exports = (app, db) => {
     app.post('/auth/login', (req, res) => {
-        
+        if(!req.body.username || !req.body.password){
+            res.json({
+                success: false,
+                message: 'Please enter username and password.'
+            });
+        } else { 
+            const username = req.body.username;
+            const password = req.body.password;
+            db.users.isValidUserPassword(username,password).then(isValid =>{
+                if(isValid){
+                    res.json({
+                        success: true,
+                        message: 'Good job.'
+                    });
+                } else {
+                    res.json({
+                        success: false,
+                        message: 'Please enter valid password.'
+                    });
+                }
+            }
+            );
+        }
     });
 
     app.post('/auth/signup', (req, res) => {
@@ -27,10 +49,10 @@ module.exports = (app, db) => {
             .then(data => {
                 res.json({
                     success: true,
-                    message: 'You was registered'
+                    message: 'You was registered',
                 });
             })
-            //.then(create user profile)
+            //TODO .then(create user profile)
             .catch(error => {
                 let message = 'Unexpectedly error';
                 if(error.constraint === 'users_username_key'){
