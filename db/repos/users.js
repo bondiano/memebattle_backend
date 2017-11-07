@@ -2,11 +2,13 @@
  Users table model
 */
 const bcrypt = require('bcrypt');
+const jwt = require('express-jwt');
 
 class UsersRepository {
     constructor(db, pgp) {
         this.db = db;
         this.pgp = pgp;
+        this.saltRounds = 10;
     }
 
     // Creates the table;
@@ -18,9 +20,10 @@ class UsersRepository {
             email text UNIQUE NOT NULL, 
             email_checked boolean DEFAULT false, 
             registred_at timestamp NOT NULL, 
+            token text,
             profile_id serial UNIQUE NOT NULL
         );*/
-        return this.db.none('CREATE TABLE users(id serial PRIMARY KEY, username text UNIQUE NOT NULL, password text NOT NULL, email text UNIQUE NOT NULL, email_checked boolean DEFAULT false, registred_at timestamp DEFAULT now(), profile_id serial UNIQUE NOT NULL)');
+        return this.db.none('CREATE TABLE users(id serial PRIMARY KEY, username text UNIQUE NOT NULL, password text NOT NULL, email text UNIQUE NOT NULL, email_checked boolean DEFAULT false, registred_at timestamp DEFAULT now(), token text, profile_id serial UNIQUE NOT NULL)');
     }
 
     // Drops the table;
@@ -35,9 +38,9 @@ class UsersRepository {
 
     // Adds a new user, and returns the new object;
     add(username, password, email) {
-        const saltRounds = 10;
-        password = bcrypt.hashSync(password, saltRounds);
-        return this.db.any(`INSERT INTO users(username, password, email) VALUES('${username}', '${password}', '${email}')`);
+        bcrypt.hash(password, this.saltRounds).then(function(hash) {
+            return this.db.one(`INSERT INTO users(username, password, email) VALUES('${username}', '${hash}', '${email}')`);
+        });
     }
 
     // Tries to delete a user by id, and returns the number of records deleted;
@@ -58,6 +61,46 @@ class UsersRepository {
     // Tries to find a user from email;
     findByEmail(email) {
         return this.db.oneOrNone('SELECT * FROM users WHERE email = $1', email);
+    }
+
+    // Set username
+    setNewUsername(username, newUsername) {
+        return this.db.query(`UPDATE users SET username = '${newUsername}' where username = '${username}'`);
+    }
+
+    // Set email adress
+    setNewEmail(username, newEmail) {
+        return this.db.query(`UPDATE users SET username = '${newEmail}' where username = '${username}'`);
+    }
+
+    // Get user password
+    getUserPassword(username){
+        return this.db.oneOrNone('SELECT password FROM users WHERE username = $1', username);
+    }
+
+    // Set password
+    setNewPassword(username, newPassword){
+        this.getUserPassword(username).then(data => {
+            bcrypt.compare(newPassword, data).then(function(res) {
+                if(res){ // res == true
+                    bcrypt.hash(newPassword, this.saltRounds).then(function(hash) {
+                        return this.none(`UPDATE users SET password = '${hash}' where username = '${username}'`);
+                    });
+                }
+            });
+        }
+        )
+        .catch(error => error);
+    }
+
+    // Get new jwt refresh token
+    getToken(username){
+        return this.db.oneOrNone('SELECT token FROM users WHERE username = $1', username);
+    }
+
+    // Set new jwt refresh token
+    setNewToken(username, refreshToken){
+
     }
 
     // Returns all user records;

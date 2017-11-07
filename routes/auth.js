@@ -8,7 +8,7 @@ auth/logout GET
 
 module.exports = (app, db) => {
     app.post('/auth/login', (req, res) => {
-    
+        
     });
 
     app.post('/auth/signup', (req, res) => {
@@ -27,9 +27,10 @@ module.exports = (app, db) => {
             .then(data => {
                 res.json({
                     success: true,
-                    jwt: ''
+                    message: 'You was registered'
                 });
             })
+            //.then(create user profile)
             .catch(error => {
                 let message = 'Unexpectedly error';
                 if(error.constraint === 'users_username_key'){
