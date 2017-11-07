@@ -2,7 +2,6 @@
  Users table model
 */
 const bcrypt = require('bcrypt');
-const jwt = require('express-jwt');
 
 class UsersRepository {
     constructor(db, pgp) {
@@ -20,10 +19,10 @@ class UsersRepository {
             email text UNIQUE NOT NULL, 
             email_checked boolean DEFAULT false, 
             registred_at timestamp NOT NULL, 
-            token text,
+            token text DEFAULT random(),
             profile_id serial UNIQUE NOT NULL
         );*/
-        return this.db.none('CREATE TABLE users(id serial PRIMARY KEY, username text UNIQUE NOT NULL, password text NOT NULL, email text UNIQUE NOT NULL, email_checked boolean DEFAULT false, registred_at timestamp DEFAULT now(), token text, profile_id serial UNIQUE NOT NULL)');
+        return this.db.none('CREATE TABLE users(id serial PRIMARY KEY, username text UNIQUE NOT NULL, password text NOT NULL, email text UNIQUE NOT NULL, email_checked boolean DEFAULT false, registred_at timestamp DEFAULT now(), token text DEFAULT random(), profile_id serial UNIQUE NOT NULL)');
     }
 
     // Drops the table;
@@ -77,6 +76,10 @@ class UsersRepository {
         return this.db.oneOrNone('SELECT password FROM users WHERE username = $1', username);
     }
 
+    // Get id by username  
+    getId(username){
+        return this.db.oneOrNone('SELECT id FROM users WHERE username = $1', username);
+    }
     // Check user password
     isValidUserPassword(username, password){
         return this.getUserPassword(username).then(data => 
