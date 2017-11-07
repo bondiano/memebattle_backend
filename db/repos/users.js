@@ -109,7 +109,7 @@ class UsersRepository {
 
     // Set new jwt refresh token
     setNewToken(username, refreshToken){
-
+        return this.db.none(`UPDATE users SET token = '${refreshToken}' where username = '${username}'`);
     }
 
     // Returns all user records;

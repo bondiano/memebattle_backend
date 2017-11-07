@@ -22,22 +22,35 @@ module.exports = (app, db) => {
                 if(isValid){
                     // jwt: send two token: access, refresh and in expires_in unix timestamp
                     db.users.getId(username).then(data =>{
-                        const payload = {
-                            _id: data.id,
+                        const payload_access = {
                             iss: 'http://localhost:'+ process.env.SERVER_PORT,
                             permissions: 'user'
+                        };
+                        const payload_refresh = {
+                            _id: data.id,
+                            iss: 'http://localhost:'+ process.env.SERVER_PORT
                         };
                         const options = {
                             expiresIn: '1d',
                             jwtid: v4(),
                         };
                         const secret = new Buffer(process.env.JWT_KEY, 'base64');
-                        jwt_gen.sign(payload, secret, options, (err, token) => {
-                            res.json({
-                                success: true,
-                                message: 'Good job.',
-                                data: token });
-                          });
+                        jwt_gen.sign(payload_access, secret, options, (err, token_access) => {
+                            jwt_gen.sign(payload_refresh, secret, options, (err, token_refresh) => {
+                                db.users.setNewToken(username, token_refresh).then(() => {
+                                res.json({
+                                    success: true,
+                                    message: 'Good job.',
+                                    token_access: token_access,
+                                    token_refresh: token_refresh });
+                                })
+                                .catch(error => {                        
+                                    res.status(400).json({
+                                    success: false,
+                                    error: error.message || error });
+                                });
+                            });
+                        });
                     }).catch(error => {
                         res.status(400).json({
                             success: false,
@@ -62,7 +75,7 @@ module.exports = (app, db) => {
     });
 
     app.post('/auth/refresh-token', (req, res) => {
-
+        
     });
 
     app.post('/auth/signup', (req, res) => {
