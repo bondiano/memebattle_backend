@@ -94,6 +94,11 @@ module.exports = (app, db) => {
                         error: error.message || error
                     });
                 });
+            } else {
+                res.json({
+                    success: false,
+                    message: "Token is not valid, You must login again"
+                });
             }
         })
         .catch(error => {
