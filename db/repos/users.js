@@ -80,10 +80,16 @@ class UsersRepository {
     getId(username){
         return this.db.oneOrNone('SELECT id FROM users WHERE username = $1', username);
     }
+
     // Check user password
     isValidUserPassword(username, password){
         return this.getUserPassword(username).then(data => 
             bcrypt.compare(password, data.password).then(res => res));
+    }
+
+    // Check jwt refresh token 
+    isValidToken(id, token){
+        return this.db.oneOrNone('SELECT token FROM users WHERE id = $1', id).then(data => data.token === token);
     }
 
     // Set password

@@ -1,4 +1,4 @@
-const jwt_gen = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const v4 = require('node-uuid').v4;
 require('dotenv').config({path: '../config/.env'});
 /*  
@@ -9,6 +9,42 @@ auth/logout GET
 */
 
 module.exports = (app, db) => {
+    const secret = new Buffer(process.env.JWT_KEY, 'base64');
+    const createJWT = (res, username, id) => {
+        const payload_access = {
+            iss: '/auth/login',
+            permissions: 'user'
+        };
+        const payload_refresh = {
+            _id: id,
+            iss: '/auth/login'
+        };
+        const options_access = {
+            expiresIn: '1d',
+            jwtid: v4(),
+        };
+        const options_refresh = {
+            expiresIn: '60d',
+            jwtid: v4(),
+        };
+        jwt.sign(payload_access, secret, options_access, (err, token_access) => {
+            jwt.sign(payload_refresh, secret, options_refresh, (err, token_refresh) => {
+                db.users.setNewToken(username, token_refresh).then(() => {
+                res.json({
+                    success: true,
+                    message: 'Good job.',
+                    token_access: token_access,
+                    token_refresh: token_refresh });
+                })
+                .catch(error => {                        
+                    res.status(400).json({
+                    success: false,
+                    error: error.message || error });
+                });
+            });
+        });
+    };
+
     app.post('/auth/login', (req, res) => {
         if(!req.body.username || !req.body.password){
             res.status(400).json({
@@ -22,42 +58,13 @@ module.exports = (app, db) => {
                 if(isValid){
                     // jwt: send two token: access, refresh and in expires_in unix timestamp
                     db.users.getId(username).then(data =>{
-                        const payload_access = {
-                            iss: 'http://localhost:'+ process.env.SERVER_PORT,
-                            permissions: 'user'
-                        };
-                        const payload_refresh = {
-                            _id: data.id,
-                            iss: 'http://localhost:'+ process.env.SERVER_PORT
-                        };
-                        const options = {
-                            expiresIn: '1d',
-                            jwtid: v4(),
-                        };
-                        const secret = new Buffer(process.env.JWT_KEY, 'base64');
-                        jwt_gen.sign(payload_access, secret, options, (err, token_access) => {
-                            jwt_gen.sign(payload_refresh, secret, options, (err, token_refresh) => {
-                                db.users.setNewToken(username, token_refresh).then(() => {
-                                res.json({
-                                    success: true,
-                                    message: 'Good job.',
-                                    token_access: token_access,
-                                    token_refresh: token_refresh });
-                                })
-                                .catch(error => {                        
-                                    res.status(400).json({
-                                    success: false,
-                                    error: error.message || error });
-                                });
-                            });
-                        });
+                        createJWT(res, username, data.id);
                     }).catch(error => {
                         res.status(400).json({
                             success: false,
                             error: error.message || error
                         });
                     });
-
                 } else {
                     res.status(400).json({
                         success: false,
@@ -75,7 +82,26 @@ module.exports = (app, db) => {
     });
 
     app.post('/auth/refresh-token', (req, res) => {
-        
+        const id = jwt.decode(req.body.token_refresh)._id;
+        db.users.isValidToken(id, req.body.token_refresh).then(isValid => {
+            if(isValid){
+                db.users.findById(id).then(data =>
+                    createJWT(res, data.username, id)
+                )
+                .catch(error => {
+                    res.status(400).json({
+                        success: false,
+                        error: error.message || error
+                    });
+                });
+            }
+        })
+        .catch(error => {
+            res.status(400).json({
+                success: false,
+                error: error.message || error
+            });
+        });
     });
 
     app.post('/auth/signup', (req, res) => {
