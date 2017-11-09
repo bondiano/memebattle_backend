@@ -7,9 +7,9 @@ auth/login POST
 auth/signup POST
 auth/logout GET
 */
+const secret = new Buffer(process.env.JWT_KEY, 'base64');
 
 module.exports = (app, db) => {
-    const secret = new Buffer(process.env.JWT_KEY, 'base64');
     const createJWT = (res, username, id) => {
         const payload_access = {
             iss: '/auth/login',
@@ -20,13 +20,14 @@ module.exports = (app, db) => {
             iss: '/auth/login'
         };
         const options_access = {
-            expiresIn: '1d',
+            expiresIn: '3h',
             jwtid: v4(),
         };
         const options_refresh = {
             expiresIn: '60d',
             jwtid: v4(),
         };
+
         jwt.sign(payload_access, secret, options_access, (err, token_access) => {
             jwt.sign(payload_refresh, secret, options_refresh, (err, token_refresh) => {
                 db.users.setNewToken(username, token_refresh).then(() => {
@@ -144,9 +145,5 @@ module.exports = (app, db) => {
                 });
             });
         }
-    });
-
-    app.get('/auth/logout', (req, res) => {
-
     });
 };
