@@ -7,6 +7,7 @@ const initOptions = {
         // API: http://vitaly-t.github.io/pg-promise/global.html#event:extend
         extend(obj, dc) {
             obj.users = new repos.Users(obj, pgp);
+            obj.profiles = new repos.Profiles(obj, pgp);
         }
     };
     
