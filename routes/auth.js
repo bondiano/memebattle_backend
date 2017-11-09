@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const jwt_check = require('express-jwt');
 const v4 = require('node-uuid').v4;
 require('dotenv').config({path: '../config/.env'});
 /*  
@@ -84,8 +85,9 @@ module.exports = (app, db) => {
 
     app.post('/auth/refresh-token', (req, res) => {
         const id = jwt.decode(req.body.token_refresh)._id;
+        const exp = jwt.decode(req.body.token_refresh).exp;
         db.users.isValidToken(id, req.body.token_refresh).then(isValid => {
-            if(isValid){
+            if(isValid && exp >= Math.floor(Date.now() / 1000)){
                 db.users.findById(id).then(data =>
                     createJWT(res, data.username, id)
                 )
@@ -145,5 +147,14 @@ module.exports = (app, db) => {
                 });
             });
         }
+    });
+
+    //test for token. Must use Authorization: Bearer <token> in header
+    app.get('/auth/secret', jwt_check({ secret: secret }), (req, res) => {
+        console.log(req.user.permissions);
+        // if (!req.user.admin){
+        //     return res.sendStatus(401);
+        // } 
+        res.sendStatus(200);
     });
 };
