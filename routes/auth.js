@@ -11,14 +11,14 @@ auth/logout GET
 const secret = new Buffer(process.env.JWT_KEY, 'base64');
 
 module.exports = (app, db) => {
-    const createJWT = (res, username, id) => {
+    const createJWT = (res, username, id, ref) => {
         const payload_access = {
-            iss: '/auth/login',
+            iss: `/auth/${ref}`,
             permissions: 'user'
         };
         const payload_refresh = {
             _id: id,
-            iss: '/auth/login'
+            iss: `/auth/${ref}`
         };
         const options_access = {
             expiresIn: '3h',
@@ -60,7 +60,7 @@ module.exports = (app, db) => {
                 if(isValid){
                     // jwt: send two token: access, refresh and in expires_in unix timestamp
                     db.users.getId(username).then(data =>{
-                        createJWT(res, username, data.id);
+                        createJWT(res, username, data.id, 'login');
                     }).catch(error => {
                         res.status(400).json({
                             success: false,
@@ -89,7 +89,7 @@ module.exports = (app, db) => {
         db.users.isValidToken(id, req.body.token_refresh).then(isValid => {
             if(isValid && exp >= Math.floor(Date.now() / 1000)){
                 db.users.findById(id).then(data =>
-                    createJWT(res, data.username, id)
+                    createJWT(res, data.username, id, 'refresh-token')
                 )
                 .catch(error => {
                     res.status(400).json({
