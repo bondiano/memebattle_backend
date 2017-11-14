@@ -12,6 +12,7 @@ const express = require('express');
 const morgan = require('morgan');
 const pgdb = require('./db/pg-db');
 const bodyParser = require('body-parser');
+var cors = require('cors')
 
 /* Middleware init section */
 const app = express();
@@ -36,6 +37,8 @@ app.use((req, res, next) => {
 });
 
 /* App section */
+app.use(cors());
+
 app.listen(port, function () {
   console.log(`App listening on port ${port}!`);
 });
