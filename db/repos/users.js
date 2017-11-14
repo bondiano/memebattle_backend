@@ -13,12 +13,12 @@ class UsersRepository {
     // Creates the table;
     create() {
         /*CREATE TABLE users(
-            id serial PRIMARY KEY, 
-            username text UNIQUE NOT NULL, 
-            password text NOT NULL, 
-            email text UNIQUE NOT NULL, 
-            email_checked boolean DEFAULT false, 
-            registred_at timestamp NOT NULL, 
+            id serial PRIMARY KEY,
+            username text UNIQUE NOT NULL,
+            password text NOT NULL,
+            email text UNIQUE NOT NULL,
+            email_checked boolean DEFAULT false,
+            registred_at timestamp NOT NULL,
             token text DEFAULT random(),
             profile_id serial UNIQUE NOT NULL
         );*/
@@ -76,18 +76,18 @@ class UsersRepository {
         return this.db.oneOrNone('SELECT password FROM users WHERE username = $1', username);
     }
 
-    // Get id by username  
+    // Get id by username
     getId(username){
         return this.db.oneOrNone('SELECT id FROM users WHERE username = $1', username);
     }
 
     // Check user password
     isValidUserPassword(username, password){
-        return this.getUserPassword(username).then(data => 
+        return this.getUserPassword(username).then(data =>
             bcrypt.compare(password, data.password).then(res => res));
     }
 
-    // Check jwt refresh token 
+    // Check jwt refresh token
     isValidToken(id, token){
         return this.db.oneOrNone('SELECT token FROM users WHERE id = $1', id).then(data => data.token === token);
     }
@@ -125,7 +125,7 @@ class UsersRepository {
 
     // Returns the total number of users;
     total() {
-        return this.db.one('SELECT count(*) FROMhis repository  users', [], a => +a.count);
+        return this.db.one('SELECT count(*) FROM repository  users', [], a => +a.count);
     }
 }
 

@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const jwt_check = require('express-jwt');
 const v4 = require('node-uuid').v4;
 require('dotenv').config({path: '../config/.env'});
-/*  
+/*
 site/auth/* route:
 auth/login POST
 auth/signup POST
@@ -38,7 +38,7 @@ module.exports = (app, db) => {
                     token_access: token_access,
                     token_refresh: token_refresh });
                 })
-                .catch(error => {                        
+                .catch(error => {
                     res.status(400).json({
                     success: false,
                     error: error.message || error });
@@ -53,7 +53,7 @@ module.exports = (app, db) => {
                 success: false,
                 message: 'Please enter username and password.'
             });
-        } else { 
+        } else {
             const username = req.body.username;
             const password = req.body.password;
             db.users.isValidUserPassword(username,password).then(isValid =>{
@@ -136,7 +136,7 @@ module.exports = (app, db) => {
                 let message = 'Unexpectedly error';
                 if(error.constraint === 'users_username_key'){
                     message = 'User with this username already exists';
-                } 
+                }
                 if(error.constraint === 'users_email_key'){
                     message = 'User with this username already exists';
                 }
@@ -154,7 +154,7 @@ module.exports = (app, db) => {
         console.log(req.user.permissions);
         // if (!req.user.admin){
         //     return res.sendStatus(401);
-        // } 
+        // }
         res.sendStatus(200);
     });
 };
