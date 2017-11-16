@@ -34,7 +34,6 @@ module.exports = (app, db) => {
                 db.users.setNewToken(username, token_refresh).then(() => {
                 res.json({
                     success: true,
-                    message: 'Good job.',
                     token_access: token_access,
                     token_refresh: token_refresh });
                 })
@@ -60,7 +59,42 @@ module.exports = (app, db) => {
                 if(isValid){
                     // jwt: send two token: access, refresh and in expires_in unix timestamp
                     db.users.getId(username).then(data =>{
-                        createJWT(res, username, data.id, 'login');
+                        const payload_access = {
+                            iss: `/auth/login`,
+                            permissions: 'user'
+                        };
+                        const payload_refresh = {
+                            _id: data.id,
+                            iss: `/auth/login`
+                        };
+                        const options_access = {
+                            expiresIn: '3h',
+                            jwtid: v4(),
+                        };
+                        const options_refresh = {
+                            expiresIn: '60d',
+                            jwtid: v4(),
+                        };
+                
+                        jwt.sign(payload_access, secret, options_access, (err, token_access) => {
+                            jwt.sign(payload_refresh, secret, options_refresh, (err, token_refresh) => {
+                                db.users.setNewToken(username, token_refresh).then(() => {
+                                res.json({
+                                    success: true,
+                                    _id: data.id,
+                                    username: username,
+                                    permissions: 'user',
+                                    token_access: token_access,
+                                    token_refresh: token_refresh 
+                                });
+                                })
+                                .catch(error => {
+                                    res.status(400).json({
+                                    success: false,
+                                    error: error.message || error });
+                                });
+                            });
+                        });
                     }).catch(error => {
                         res.status(400).json({
                             success: false,
