@@ -14,4 +14,10 @@ npm start
 # use nodemon for start serve with hot reload
 npm run dev
 
+# install pg-migrate
+npm install -g pg-migrate
+
+# use pg-migrate for migrate db
+pg-migrate -u postgres://postgres@localhost/membattle -d ./db/migrate
+
 ```

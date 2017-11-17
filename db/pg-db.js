@@ -8,6 +8,7 @@ const initOptions = {
         extend(obj, dc) {
             obj.users = new repos.Users(obj, pgp);
             obj.profiles = new repos.Profiles(obj, pgp);
+            obj.gameModes = new repos.GameModes(obj, pgp);
         }
     };
     

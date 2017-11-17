@@ -2,5 +2,6 @@
 
 module.exports = {
     Users: require('./users'),
-    Profiles: require('./profiles')
+    Profiles: require('./profiles'),
+    GameModes: require('./game-modes'),
 };

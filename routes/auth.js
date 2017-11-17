@@ -132,7 +132,7 @@ module.exports = (app, db) => {
                     });
                 });
             } else {
-                res.json({
+                res.status(400).json({
                     success: false,
                     message: "Token is not valid, You must login again"
                 });
@@ -148,7 +148,7 @@ module.exports = (app, db) => {
 
     app.post('/auth/signup', (req, res) => {
         if(!req.body.username || !req.body.email || !req.body.password){
-            res.json({
+            res.status(400).json({
                 success: false,
                 message: 'Please enter username, email and password.'
             });
@@ -165,7 +165,9 @@ module.exports = (app, db) => {
                     message: 'You was registered',
                 });
             })
-            //TODO .then(create user profile)
+            .then(data => db.users.findByUsername(newUser.username).then(data => {
+                db.profiles.add(data.id);
+            }))
             .catch(error => {
                 let message = 'Unexpectedly error';
                 if(error.constraint === 'users_username_key'){
@@ -174,7 +176,7 @@ module.exports = (app, db) => {
                 if(error.constraint === 'users_email_key'){
                     message = 'User with this username already exists';
                 }
-                res.json({
+                res.status(400).json({
                     success: false,
                     message: message,
                     error: error.message || error

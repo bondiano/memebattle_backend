@@ -6,7 +6,7 @@ const port = process.env.SERVER_PORT;
 if(process.env.IS_PRODUCTION){
   process.env.NODE_ENV = 'production';
 }
-console.log(process.env.NODE_ENV);
+
 /* Packages require section */
 const express = require('express');
 const cors = require('cors');

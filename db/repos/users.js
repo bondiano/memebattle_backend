@@ -18,11 +18,11 @@ class UsersRepository {
             password text NOT NULL,
             email text UNIQUE NOT NULL,
             email_checked boolean DEFAULT false,
-            registred_at timestamp NOT NULL,
+            registred_at timestamp NOT NULL DEFAULT now(),
             token text DEFAULT random(),
-            profile_id serial UNIQUE NOT NULL
+            profile_id serial UNIQUE NOT NULL REFERENCES profiles(id)
         );*/
-        return this.db.none('CREATE TABLE users(id serial PRIMARY KEY, username text UNIQUE NOT NULL, password text NOT NULL, email text UNIQUE NOT NULL, email_checked boolean DEFAULT false, registred_at timestamp DEFAULT now(), token text DEFAULT random(), profile_id serial UNIQUE NOT NULL)');
+        return this.db.none('CREATE TABLE users(id serial PRIMARY KEY, username text UNIQUE NOT NULL, password text NOT NULL, email text UNIQUE NOT NULL, email_checked boolean DEFAULT false, registred_at timestamp DEFAULT now(), token text DEFAULT random(), profile_id serial UNIQUE NOT NULL REFERENCES profiles(id))');
     }
 
     // Drops the table;
@@ -53,7 +53,7 @@ class UsersRepository {
 
     // Tries to find a user from name;
     findByUsername(username) {
-        return this.db.oneOrNone('SELECT * FROM users WHERE username = $1', username);
+        return this.db.one(`SELECT * FROM users WHERE username = '${username}'`);
     }
 
     // Tries to find a user from email;
