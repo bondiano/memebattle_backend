@@ -9,6 +9,8 @@ const initOptions = {
             obj.users = new repos.Users(obj, pgp);
             obj.profiles = new repos.Profiles(obj, pgp);
             obj.gameModes = new repos.GameModes(obj, pgp);
+            obj.gameStatistics = new repos.GameStatistics(obj, pgp);
+            obj.memeStorage = new repos.MemeStorage(obj, pgp);
         }
     };
     

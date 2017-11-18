@@ -1,9 +1,15 @@
+const jwt_check = require('express-jwt');
+
+/*
+site/game/* route:
+auth/modes GET
+*/
+
+const secret = new Buffer(process.env.JWT_KEY, 'base64');
+
 module.exports = (app, db) => {
-    app.get('/game/', (req, res) => {
-
-    });
-
-    app.get('/game/modes', (req, res) => {
+    // Get existed mods
+    app.get('/game/modes', jwt_check({ secret: secret }), (req, res) => {
         db.gameModes.all().then(data  => {
             res.json(data);
         }).catch(error => {

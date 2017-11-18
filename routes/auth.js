@@ -2,12 +2,15 @@ const jwt = require('jsonwebtoken');
 const jwt_check = require('express-jwt');
 const v4 = require('node-uuid').v4;
 require('dotenv').config({path: '../config/.env'});
+
 /*
 site/auth/* route:
 auth/login POST
 auth/signup POST
-auth/logout GET
+auth/refresh-token POST
+auth/secret GET
 */
+
 const secret = new Buffer(process.env.JWT_KEY, 'base64');
 
 module.exports = (app, db) => {
