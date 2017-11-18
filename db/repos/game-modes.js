@@ -14,10 +14,9 @@ class GameModesRepository {
             mode_name text UNIQUE NOT NULL,
             start_at timestamp,
             fiish_at timestamp,
-            description text UNIQUE,
-            statistic_id serial UNIQUE NOT NULL
+            description text UNIQUE
         );*/
-        return this.db.none('CREATE TABLE game_modes(id serial PRIMARY KEY, mode_name text UNIQUE NOT NULL, start_at timestamp, fiish_at timestamp, description text UNIQUE, statistic_id serial UNIQUE NOT NULL)');
+        return this.db.none('CREATE TABLE game_modes(id serial PRIMARY KEY, mode_name text UNIQUE NOT NULL, start_at timestamp, fiish_at timestamp, description text UNIQUE)');
     }
 
     // Drops the table;
@@ -25,9 +24,19 @@ class GameModesRepository {
         return this.db.none('DROP TABLE game_modes');
     }
 
-        // Removes all records from the table;
+    // Removes all records from the table;
     empty() {
         return this.db.none('TRUNCATE TABLE game_modes CASCADE');
+    }
+
+    // Add new game mode;
+    add(name, description) {
+        this.db.any(`INSERT INTO game_modes(mode_name, description) VALUES('${name}', '${description}')`);
+    }
+
+    // Select all modes;
+    all() {
+        return this.db.any('SELECT * FROM game_modes');
     }
 }
 
