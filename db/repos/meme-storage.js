@@ -17,9 +17,9 @@ class MemeStorageRepository {
             likes_count NUMERIC DEFAULT 0,
             reposts_count NUMERIC DEFAULT 0,
             factor NUMERIC DEFAULT 0,
-            mode_id serial REFERENCES game_modes(id)
+            mode_id INTEGER REFERENCES game_modes(id)
         );*/
-        return this.db.none('CREATE TABLE meme_storage(id serial PRIMARY KEY, image_src text NOT NULL, description text, added_at timestamp DEFAULT now(), likes_count NUMERIC DEFAULT 0, reposts_count NUMERIC DEFAULT 0, factor NUMERIC DEFAULT 0, mode_id serial REFERENCES game_modes(id))');
+        return this.db.none('CREATE TABLE meme_storage(id serial PRIMARY KEY, image_src text NOT NULL, description text, added_at timestamp DEFAULT now(), likes_count NUMERIC DEFAULT 0, reposts_count NUMERIC DEFAULT 0, factor NUMERIC DEFAULT 0, mode_id INTEGER REFERENCES game_modes(id))');
     }
 
     // Drops the table;

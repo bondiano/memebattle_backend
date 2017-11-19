@@ -11,6 +11,7 @@ const initOptions = {
             obj.gameModes = new repos.GameModes(obj, pgp);
             obj.gameStatistics = new repos.GameStatistics(obj, pgp);
             obj.memeStorage = new repos.MemeStorage(obj, pgp);
+            obj.games = new repos.Games(obj, pgp);
         }
     };
     

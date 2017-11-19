@@ -1,5 +1,5 @@
 /*
- Game statistics modes table model
+ Game statistics table model
 */
 class GameStatisticsRepository {
     constructor(db, pgp) {
@@ -14,9 +14,9 @@ class GameStatisticsRepository {
             raund  NUMERIC NOT NULL,
             fiish_at timestamp DEFAULT now(),
             winers_json text,
-            mode_id serial REFERENCES game_modes(id)
+            mode_id INTEGER REFERENCES game_modes(id)
         );*/
-        return this.db.none('CREATE TABLE game_statistics( id serial PRIMARY KEY, raund  NUMERIC NOT NULL, fiish_at timestamp DEFAULT now(), winers_json text, mode_id serial REFERENCES game_modes(id))');
+        return this.db.none('CREATE TABLE game_statistics( id serial PRIMARY KEY, raund  NUMERIC NOT NULL, fiish_at timestamp DEFAULT now(), winers_json text, mode_id INTEGER REFERENCES game_modes(id))');
     }
 
     // Drops the table;

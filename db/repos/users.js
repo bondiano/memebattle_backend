@@ -20,9 +20,9 @@ class UsersRepository {
             email_checked boolean DEFAULT false,
             registred_at timestamp NOT NULL DEFAULT now(),
             token text DEFAULT random(),
-            profile_id serial UNIQUE NOT NULL REFERENCES profiles(id)
+            profile_id INTEGER UNIQUE NOT NULL REFERENCES profiles(id)
         );*/
-        return this.db.none('CREATE TABLE users(id serial PRIMARY KEY, username text UNIQUE NOT NULL, password text NOT NULL, email text UNIQUE NOT NULL, email_checked boolean DEFAULT false, registred_at timestamp DEFAULT now(), token text DEFAULT random(), profile_id serial UNIQUE NOT NULL REFERENCES profiles(id))');
+        return this.db.none('CREATE TABLE users(id serial PRIMARY KEY, username text UNIQUE NOT NULL, password text NOT NULL, email text UNIQUE NOT NULL, email_checked boolean DEFAULT false, registred_at timestamp DEFAULT now(), token text DEFAULT random(), profile_id INTEGER UNIQUE NOT NULL REFERENCES profiles(id))');
     }
 
     // Drops the table;

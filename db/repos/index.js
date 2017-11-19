@@ -6,4 +6,5 @@ module.exports = {
     GameModes: require('./game-modes'),
     GameStatistics: require('./game-statistics'),
     MemeStorage: require('./meme-storage'),
+    Games: require('./games'),
 };

@@ -1,5 +1,5 @@
 /*
- Profiles modes table model
+ Profiles table model
 */
 class ProfilesRepository {
     constructor(db, pgp) {

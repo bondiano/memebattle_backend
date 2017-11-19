@@ -94,6 +94,7 @@ module.exports = (app, db) => {
                                 .catch(error => {
                                     res.status(400).json({
                                     success: false,
+                                    message: 'Please enter valid username and password.',
                                     error: error.message || error });
                                 });
                             });
@@ -101,6 +102,7 @@ module.exports = (app, db) => {
                     }).catch(error => {
                         res.status(400).json({
                             success: false,
+                            message: 'Please enter valid username and password.',
                             error: error.message || error
                         });
                     });
