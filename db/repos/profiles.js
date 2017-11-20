@@ -9,12 +9,13 @@ class ProfilesRepository {
 
     // Creates the table;
     create() {
-        /*CREATE TABLE profiles(
+        /*CCREATE TABLE profiles(
             id serial PRIMARY KEY,
             coins_count NUMERIC DEFAULT 0,
-            avatar text
-        );*/
-        return this.db.none('CREATE TABLE profiles(id serial PRIMARY KEY, coins_count NUMERIC DEFAULT 0, avatar text)');
+            avatar text,
+            user_id INTEGER UNIQUE NOT NULL REFERENCES users(id)
+    );*/
+        return this.db.none('CREATE TABLE profiles(id serial PRIMARY KEY, coins_count NUMERIC DEFAULT 0, avatar text, user_id INTEGER UNIQUE NOT NULL REFERENCES users(id))');
     }
 
     // Drops the table;
@@ -29,7 +30,7 @@ class ProfilesRepository {
 
     // Add new profile;
     add(id) {
-        this.db.any(`INSERT INTO user_id(id) VALUES('${id}')`);
+        this.db.none(`INSERT INTO profiles(user_id) VALUES('${id}')`);
     }
 
     // Select all profiles;
@@ -39,7 +40,7 @@ class ProfilesRepository {
     
     // Add coin to profile with id
     addCoin(id, count) {
-        this.db.query(`UPDATE profiles SET coins = coins + ${count} WHERE id = ${id}`);
+        this.db.query(`UPDATE profiles SET coins_count = coins_count + ${count} WHERE user_id = ${id}`);
     }
 }
 

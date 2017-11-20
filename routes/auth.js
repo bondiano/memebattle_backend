@@ -171,7 +171,12 @@ module.exports = (app, db) => {
                 });
             })
             .then(data => db.users.findByUsername(newUser.username).then(data => {
-                db.profiles.add(data.id);
+                db.profiles.add(data.id).catch(error => {
+                    res.status(400).json({
+                        success: false,
+                        error: error.message || error
+                    });
+                });
             }))
             .catch(error => {
                 let message = 'Unexpectedly error';

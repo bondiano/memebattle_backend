@@ -128,8 +128,12 @@ class UsersRepository {
         return this.db.one('SELECT count(*) FROM repository  users', [], a => +a.count);
     }
 
-    getTop100() {
-        return this.db.any('SELECT users.username as username, profiles.coins_count as coins FROM users INNER JOIN profiles ON profiles.id = users.profile_id ORDER BY coins DESC LIMIT 100');
+    getUserWhithRating(id) {
+        return this.db.one(`SELECT rating, username, coins FROM (SELECT id, row_number() OVER () as rating, username, coins FROM (SELECT users.id AS id, users.username AS username, profiles.coins_count AS coins FROM users INNER JOIN profiles ON users.id = profiles.user_id ORDER BY profiles.coins_count DESC) AS top) AS toplist WHERE id = $1`, id);
+    }
+
+    getTop15() {
+        return this.db.any('SELECT users.username as username, profiles.coins_count as coins FROM users INNER JOIN profiles ON users.id = profiles.user_id ORDER BY coins DESC LIMIT 15');
     }
 }
 
