@@ -19,4 +19,15 @@ module.exports = (app, db) => {
             });
         });
     });
+
+    app.get('/games/liders', (req, res) => {
+        db.users.getTop100().then(data  => {
+            res.json(data);
+        }).catch(error => {
+            res.status(400).json({
+                success: false,
+                error: error.message || error
+            });
+        });
+    });
 };

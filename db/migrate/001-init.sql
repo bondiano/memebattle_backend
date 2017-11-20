@@ -6,15 +6,15 @@ CREATE TABLE users(
             email text UNIQUE NOT NULL,
             email_checked boolean DEFAULT false,
             registred_at timestamp NOT NULL DEFAULT now(),
-            token text DEFAULT random(),
-            profile_id INTEGER UNIQUE NOT NULL REFERENCES profiles(id)
+            token text DEFAULT random()
 );
 
 DROP TABLE IF EXISTS profiles CASCADE;
 CREATE TABLE profiles(
             id serial PRIMARY KEY,
             coins_count NUMERIC DEFAULT 0,
-            avatar text
+            avatar text,
+            user_id INTEGER UNIQUE NOT NULL REFERENCES users(id)
 );
 
 DROP TABLE IF EXISTS game_modes CASCADE;

@@ -127,6 +127,10 @@ class UsersRepository {
     total() {
         return this.db.one('SELECT count(*) FROM repository  users', [], a => +a.count);
     }
+
+    getTop100() {
+        return this.db.any('SELECT users.username as username, profiles.coins_count as coins FROM users INNER JOIN profiles ON profiles.id = users.profile_id ORDER BY coins DESC LIMIT 100');
+    }
 }
 
 module.exports = UsersRepository;

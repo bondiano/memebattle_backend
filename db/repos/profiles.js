@@ -29,7 +29,7 @@ class ProfilesRepository {
 
     // Add new profile;
     add(id) {
-        this.db.any(`INSERT INTO profiles(id) VALUES('${id}')`);
+        this.db.any(`INSERT INTO user_id(id) VALUES('${id}')`);
     }
 
     // Select all profiles;
