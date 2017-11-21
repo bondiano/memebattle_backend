@@ -23,8 +23,8 @@ class GamesRepository {
         id serial PRIMARY KEY,
         game_id INTEGER NOT NULL REFERENCES games(id) ON UPDATE CASCADE ON DELETE CASCADE,
         meme_id INTEGER NOT NULL REFERENCES meme_storage(id) ON UPDATE CASCADE ON DELETE CASCADE
-        );*/    
-        return this.db.none(`CREATE TABLE played_memes(id serial PRIMARY KEY, game_id INTEGER NOT NULL REFERENCES games(id) ON UPDATE CASCADE ON DELETE CASCADE, meme_id INTEGER NOT NULL REFERENCES meme_storage(id) ON UPDATE CASCADE ON DELETE CASCADE)`);    
+        );*/
+        return this.db.none(`CREATE TABLE played_memes(id serial PRIMARY KEY, game_id INTEGER NOT NULL REFERENCES games(id) ON UPDATE CASCADE ON DELETE CASCADE, meme_id INTEGER NOT NULL REFERENCES meme_storage(id) ON UPDATE CASCADE ON DELETE CASCADE)`);
     }
 
     createPlayres() {
@@ -32,8 +32,8 @@ class GamesRepository {
         id serial PRIMARY KEY,
         game_id INTEGER NOT NULL REFERENCES games(id) ON UPDATE CASCADE ON DELETE CASCADE,
         user_id INTEGER NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
-        );*/    
-        return this.db.none(`CREATE TABLE playres(id serial PRIMARY KEY, game_id INTEGER NOT NULL REFERENCES games(id) ON UPDATE CASCADE ON DELETE CASCADE, user_id INTEGER NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE)`);    
+        );*/
+        return this.db.none(`CREATE TABLE playres(id serial PRIMARY KEY, game_id INTEGER NOT NULL REFERENCES games(id) ON UPDATE CASCADE ON DELETE CASCADE, user_id INTEGER NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE)`);
     }
 
     createWinerMemes() {
@@ -41,8 +41,8 @@ class GamesRepository {
         id serial PRIMARY KEY,
         game_id INTEGER NOT NULL REFERENCES games(id) ON UPDATE CASCADE ON DELETE CASCADE,
         meme_id INTEGER NOT NULL REFERENCES meme_storage(id) ON UPDATE CASCADE ON DELETE CASCADE
-        );*/    
-        return this.db.none(`CREATE TABLE winer_memes(id serial PRIMARY KEY, game_id INTEGER NOT NULL REFERENCES games(id) ON UPDATE CASCADE ON DELETE CASCADE, meme_id INTEGER NOT NULL REFERENCES meme_storage(id) ON UPDATE CASCADE ON DELETE CASCADE);`);    
+        );*/
+        return this.db.none(`CREATE TABLE winer_memes(id serial PRIMARY KEY, game_id INTEGER NOT NULL REFERENCES games(id) ON UPDATE CASCADE ON DELETE CASCADE, meme_id INTEGER NOT NULL REFERENCES meme_storage(id) ON UPDATE CASCADE ON DELETE CASCADE);`);
     }
 
     // Drops the table;
@@ -55,9 +55,9 @@ class GamesRepository {
         return this.db.none('TRUNCATE TABLE games CASCADE');
     }
 
-    // Add new profile;
+    // Add new game;
     add(status, modeId) {
-        this.db.any(`INSERT INTO games(status, mode_id) VALUES('${status}', '${modeId}')`);
+        return this.db.any(`INSERT INTO games(status, mode_id) VALUES('${status}', '${modeId}') RETURNING id`);
     }
 
     // Select all games;
@@ -69,7 +69,7 @@ class GamesRepository {
     updateStatus(id, status) {
         return this.db.query(`UPDATE games SET status = '${status}' WHERE id = '${id}'`);
     }
-    
+
     getAllGameMemes(id) {
         return this.db.any(`SELECT meme_storage.id as meme_id, meme_storage.image_src as meme_image FROM meme_storage INNER JOIN played_memes ON meme_storage.id = played_memes.meme_id WHERE game_id = ${id}`);
     }
