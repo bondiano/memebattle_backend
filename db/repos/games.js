@@ -1,63 +1,11 @@
 /*
- Games table model
+ Games (games, played_memes, playres, winer_memes) table model
 */
+
 class GamesRepository {
     constructor(db, pgp) {
         this.db = db;
         this.pgp = pgp;
-    }
-
-    // Creates the table;
-    create() {
-        /*CREATE TABLE games(
-            id serial PRIMARY KEY,
-            status text DEFAULT 'prepare',
-            mode_id INTEGER REFERENCES game_modes(id) ON UPDATE CASCADE ON DELETE CASCADE
-        );*/
-        return this.db.any(`CREATE TABLE games(id serial PRIMARY KEY, status text DEFAULT 'prepare', mode_id INTEGER REFERENCES game_modes(id) ON UPDATE CASCADE ON DELETE CASCADE)`);
-    }
-
-
-    createPlayedMemes() {
-        /*CREATE TABLE played_memes(
-        id serial PRIMARY KEY,
-        game_id INTEGER NOT NULL REFERENCES games(id) ON UPDATE CASCADE ON DELETE CASCADE,
-        meme_id INTEGER NOT NULL REFERENCES meme_storage(id) ON UPDATE CASCADE ON DELETE CASCADE
-        );*/    
-        return this.db.none(`CREATE TABLE played_memes(id serial PRIMARY KEY, game_id INTEGER NOT NULL REFERENCES games(id) ON UPDATE CASCADE ON DELETE CASCADE, meme_id INTEGER NOT NULL REFERENCES meme_storage(id) ON UPDATE CASCADE ON DELETE CASCADE)`);    
-    }
-
-    createPlayres() {
-        /*CREATE TABLE playres(
-        id serial PRIMARY KEY,
-        game_id INTEGER NOT NULL REFERENCES games(id) ON UPDATE CASCADE ON DELETE CASCADE,
-        user_id INTEGER NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
-        );*/    
-        return this.db.none(`CREATE TABLE playres(id serial PRIMARY KEY, game_id INTEGER NOT NULL REFERENCES games(id) ON UPDATE CASCADE ON DELETE CASCADE, user_id INTEGER NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE)`);    
-    }
-
-    createWinerMemes() {
-        /*CREATE TABLE winer_memes(
-        id serial PRIMARY KEY,
-        game_id INTEGER NOT NULL REFERENCES games(id) ON UPDATE CASCADE ON DELETE CASCADE,
-        meme_id INTEGER NOT NULL REFERENCES meme_storage(id) ON UPDATE CASCADE ON DELETE CASCADE
-        );*/    
-        return this.db.none(`CREATE TABLE winer_memes(id serial PRIMARY KEY, game_id INTEGER NOT NULL REFERENCES games(id) ON UPDATE CASCADE ON DELETE CASCADE, meme_id INTEGER NOT NULL REFERENCES meme_storage(id) ON UPDATE CASCADE ON DELETE CASCADE);`);    
-    }
-
-    // Drops the table;
-    drop() {
-        return this.db.none('DROP TABLE games');
-    }
-
-    // Removes all records from the table;
-    empty() {
-        return this.db.none('TRUNCATE TABLE games CASCADE');
-    }
-
-    // Add new profile;
-    add(status, modeId) {
-        this.db.any(`INSERT INTO games(status, mode_id) VALUES('${status}', '${modeId}')`);
     }
 
     // Select all games;

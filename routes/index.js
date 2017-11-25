@@ -8,7 +8,13 @@ module.exports = (app, db) => {
     service(app, db);
     game(app, db);
 
-    app.get('/', (req, res) => {
-        res.send('Hello World!');
+
+    /* Error handlers */
+
+    // catch 404 and forward to error handler
+    app.use((req, res, next) => {
+        const err = new Error('Not Found');
+        err.status = 404;
+        next(err);
     });
 };

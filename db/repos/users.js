@@ -1,6 +1,7 @@
 /*
- Users table model
+ Users (users) table model
 */
+
 const bcrypt = require('bcrypt');
 
 class UsersRepository {
@@ -8,31 +9,6 @@ class UsersRepository {
         this.db = db;
         this.pgp = pgp;
         this.saltRounds = 10;
-    }
-
-    // Creates the table;
-    create() {
-        /*CREATE TABLE users(
-            id serial PRIMARY KEY,
-            username text UNIQUE NOT NULL,
-            password text NOT NULL,
-            email text UNIQUE NOT NULL,
-            email_checked boolean DEFAULT false,
-            registred_at timestamp NOT NULL DEFAULT now(),
-            token text DEFAULT random(),
-            profile_id INTEGER UNIQUE NOT NULL REFERENCES profiles(id)
-        );*/
-        return this.db.none('CREATE TABLE users(id serial PRIMARY KEY, username text UNIQUE NOT NULL, password text NOT NULL, email text UNIQUE NOT NULL, email_checked boolean DEFAULT false, registred_at timestamp DEFAULT now(), token text DEFAULT random(), profile_id INTEGER UNIQUE NOT NULL REFERENCES profiles(id))');
-    }
-
-    // Drops the table;
-    drop() {
-        return this.db.none('DROP TABLE users');
-    }
-
-    // Removes all records from the table;
-    empty() {
-        return this.db.none('TRUNCATE TABLE users CASCADE');
     }
 
     // Adds a new user, and returns the new object;
@@ -96,7 +72,7 @@ class UsersRepository {
     setNewPassword(username, newPassword){
         this.getUserPassword(username).then(data => {
             bcrypt.compare(newPassword, data).then((res) => {
-                if(res){ // res == true
+                if(res){
                     bcrypt.hash(newPassword, this.saltRounds).then((hash) => {
                         return this.none(`UPDATE users SET password = '${hash}' where username = '${username}'`);
                     });
@@ -128,12 +104,14 @@ class UsersRepository {
         return this.db.one('SELECT count(*) FROM repository  users', [], a => +a.count);
     }
 
+    // Returns the total user order in coins-count top;
     getUserWhithRating(id) {
         return this.db.one(`SELECT rating, username, coins FROM (SELECT id, row_number() OVER () as rating, username, coins FROM (SELECT users.id AS id, users.username AS username, profiles.coins_count AS coins FROM users INNER JOIN profiles ON users.id = profiles.user_id ORDER BY profiles.coins_count DESC) AS top) AS toplist WHERE id = $1`, id);
     }
 
-    getTop15() {
-        return this.db.any('SELECT users.username as username, profiles.coins_count as coins FROM users INNER JOIN profiles ON users.id = profiles.user_id ORDER BY coins DESC LIMIT 15');
+    // Returns the best users by coin count;
+    getTop(count) {
+        return this.db.any(`SELECT users.username as username, profiles.coins_count as coins FROM users INNER JOIN profiles ON users.id = profiles.user_id ORDER BY coins DESC LIMIT ${count}`);
     }
 }
 

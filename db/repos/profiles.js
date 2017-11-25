@@ -1,31 +1,11 @@
 /*
- Profiles table model
+ Profiles (profiles) table model
 */
+
 class ProfilesRepository {
     constructor(db, pgp) {
         this.db = db;
         this.pgp = pgp;
-    }
-
-    // Creates the table;
-    create() {
-        /*CCREATE TABLE profiles(
-            id serial PRIMARY KEY,
-            coins_count NUMERIC DEFAULT 0,
-            avatar text,
-            user_id INTEGER UNIQUE NOT NULL REFERENCES users(id)
-    );*/
-        return this.db.none('CREATE TABLE profiles(id serial PRIMARY KEY, coins_count NUMERIC DEFAULT 0, avatar text, user_id INTEGER UNIQUE NOT NULL REFERENCES users(id))');
-    }
-
-    // Drops the table;
-    drop() {
-        return this.db.none('DROP TABLE profiles');
-    }
-
-    // Removes all records from the table;
-    empty() {
-        return this.db.none('TRUNCATE TABLE profiles CASCADE');
     }
 
     // Add new profile;
