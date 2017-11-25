@@ -13,12 +13,17 @@ const cors = require('cors');
 const morgan = require('morgan');
 const pgdb = require('./db/pg-db');
 const bodyParser = require('body-parser');
-
 /* Middleware init section */
 const app = express();
-const logger = morgan('combined');
 
-/* Midlware use section */
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+
+const logger = morgan('combined');
+const redis = require('./redis')();
+
+
+/* Middleware use section */
 app.use(cors());
 app.use(logger);
 app.use(require('express-promise')());
@@ -27,7 +32,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 /* Set up app routes */
 require('./routes')(app, pgdb);
+require('./ws')(io);
 
-app.listen(port, function () {
+server.listen(port, function () {
   console.log(`App listening on port ${port}!`);
 });

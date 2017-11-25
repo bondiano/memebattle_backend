@@ -8,6 +8,12 @@ class GamesRepository {
         this.pgp = pgp;
     }
 
+    
+    // Add new game;   
+    add(status, modeId) {
+        return this.db.any(`INSERT INTO games(status, mode_id) VALUES('${status}', '${modeId}') RETURNING id`);
+    }
+    
     // Select all games;
     all() {
         return this.db.any('SELECT * FROM games');
@@ -17,7 +23,7 @@ class GamesRepository {
     updateStatus(id, status) {
         return this.db.query(`UPDATE games SET status = '${status}' WHERE id = '${id}'`);
     }
-    
+
     getAllGameMemes(id) {
         return this.db.any(`SELECT meme_storage.id as meme_id, meme_storage.image_src as meme_image FROM meme_storage INNER JOIN played_memes ON meme_storage.id = played_memes.meme_id WHERE game_id = ${id}`);
     }
