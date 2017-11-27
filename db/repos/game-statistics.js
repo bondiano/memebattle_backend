@@ -10,7 +10,7 @@ class GameStatisticsRepository {
 
     // Add new raund to statistic;
     add(raund, winers, modeId) {
-        this.db.any(`INSERT INTO game_statistics(raund, winers_json, mode_id) VALUES('${raund}', '${winers}', '${modeId}')`);
+        this.db.any('INSERT INTO game_statistics(raund, winers_json, mode_id) VALUES($1, $2, $3)', [raund, winers, modeId]);
     }
 
     // Select full statistic;

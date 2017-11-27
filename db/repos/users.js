@@ -14,7 +14,7 @@ class UsersRepository {
     // Adds a new user, and returns the new object;
     add(username, password, email) {
         return bcrypt.hash(password, this.saltRounds).then((hash) =>
-            this.db.any(`INSERT INTO users(username, password, email) VALUES('${username}', '${hash}', '${email}')`));
+            this.db.oneOrNone('INSERT INTO users(username, password, email) VALUES($1, $2, $3)', [username, hash, email]));
     }
 
     // Tries to delete a user by id, and returns the number of records deleted;
@@ -29,7 +29,7 @@ class UsersRepository {
 
     // Tries to find a user from name;
     findByUsername(username) {
-        return this.db.one(`SELECT * FROM users WHERE username = '${username}'`);
+        return this.db.one('SELECT * FROM users WHERE username = $1', username);
     }
 
     // Tries to find a user from email;
@@ -39,12 +39,12 @@ class UsersRepository {
 
     // Set username
     setNewUsername(username, newUsername) {
-        return this.db.query(`UPDATE users SET username = '${newUsername}' where username = '${username}'`);
+        return this.db.query('UPDATE users SET username = $1 where username = $2', [username, newUsername]);
     }
 
     // Set email adress
     setNewEmail(username, newEmail) {
-        return this.db.query(`UPDATE users SET username = '${newEmail}' where username = '${username}'`);
+        return this.db.query('UPDATE users SET username = $1 where username = $2', [username, newEmail]);
     }
 
     // Get user password
@@ -74,7 +74,7 @@ class UsersRepository {
             bcrypt.compare(newPassword, data).then((res) => {
                 if(res){
                     bcrypt.hash(newPassword, this.saltRounds).then((hash) => {
-                        return this.none(`UPDATE users SET password = '${hash}' where username = '${username}'`);
+                        return this.none('UPDATE users SET password = $1 where username = $2', [hash, username]);
                     });
                 } else {
                     return false;
@@ -91,7 +91,7 @@ class UsersRepository {
 
     // Set new jwt refresh token
     setNewToken(username, refreshToken){
-        return this.db.none(`UPDATE users SET token = '${refreshToken}' where username = '${username}'`);
+        return this.db.none('UPDATE users SET token = $2 where username = $1', [username, refreshToken]);
     }
 
     // Returns all user records;
@@ -105,13 +105,13 @@ class UsersRepository {
     }
 
     // Returns the total user order in coins-count top;
-    getUserWhithRating(id) {
-        return this.db.one(`SELECT rating, username, coins FROM (SELECT id, row_number() OVER () as rating, username, coins FROM (SELECT users.id AS id, users.username AS username, profiles.coins_count AS coins FROM users INNER JOIN profiles ON users.id = profiles.user_id ORDER BY profiles.coins_count DESC) AS top) AS toplist WHERE id = $1`, id);
+    getUserWithRating(id) {
+        return this.db.one('SELECT rating, username, coins FROM (SELECT id, row_number() OVER () as rating, username, coins FROM (SELECT users.id AS id, users.username AS username, profiles.coins_count AS coins FROM users INNER JOIN profiles ON users.id = profiles.user_id ORDER BY profiles.coins_count DESC) AS top) AS toplist WHERE id = $1', id);
     }
 
     // Returns the best users by coin count;
     getTop(count) {
-        return this.db.any(`SELECT users.username as username, profiles.coins_count as coins FROM users INNER JOIN profiles ON users.id = profiles.user_id ORDER BY coins DESC LIMIT ${count}`);
+        return this.db.any('SELECT users.username as username, profiles.coins_count as coins FROM users INNER JOIN profiles ON users.id = profiles.user_id ORDER BY coins DESC LIMIT $1', count);
     }
 }
 

@@ -10,7 +10,7 @@ class ProfilesRepository {
 
     // Add new profile;
     add(id) {
-        this.db.none(`INSERT INTO profiles(user_id) VALUES('${id}')`);
+        return this.db.oneOrNone('INSERT INTO profiles(user_id) VALUES($1)', id);
     }
 
     // Select all profiles;
@@ -20,7 +20,7 @@ class ProfilesRepository {
     
     // Add coin to profile with id
     addCoin(id, count) {
-        this.db.query(`UPDATE profiles SET coins_count = coins_count + ${count} WHERE user_id = ${id}`);
+        return this.db.query('UPDATE profiles SET coins_count = coins_count + $1 WHERE user_id = $2', [id, count]);
     }
 }
 

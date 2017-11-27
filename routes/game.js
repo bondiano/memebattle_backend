@@ -8,6 +8,7 @@ game/rating POST
 */
 
 const secret = new Buffer(process.env.JWT_KEY, 'base64');
+const topCount = 10;
 
 module.exports = (app, db) => {
     // Get existed mods
@@ -21,6 +22,7 @@ module.exports = (app, db) => {
             });
         });
     });
+
     app.get('/games', (req, res) => {
         redis.keys('game:*').then(keys => keys.map((key) => {
                 return redis.hgetall(key).then((game) => ({
@@ -38,19 +40,22 @@ module.exports = (app, db) => {
             })
     });
 
-    app.post('/game/rating', (req, res) => {
-            db.users.getUserWhithRating(req.body.id).then(dataUser =>
-                db.users.getTop15().then(dataTop => {
-                    res.json({dataUser, dataTop});
-                })
-                .catch(error => {
-                    res.status(400).json({
-                        success: false,
-                        error: error.message || error
-                    });
-                }));
+    // Get rating route
+    app.post('/game/rating', jwt_check({secret: secret}), (req, res) => {
+        Promise.all([db.users.getUserWithRating(req.body.id),
+        db.users.getTop(topCount)])
+        .then(data => {
+            res.json({
+                userRating: data[0],
+                globalRating: data[1],
+            });
+        })
+        .catch(error => {
+            res.status(400).json({
+                success: false,
+                message: "Cannot get rating",
+                error: error.message || error,
+            });
+        });
     });
-};
-
-
-
+}

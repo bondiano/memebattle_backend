@@ -10,7 +10,7 @@ class GameModesRepository {
 
     // Add new game mode;
     add(name, description) {
-        this.db.any(`INSERT INTO game_modes(mode_name, description) VALUES('${name}', '${description}')`);
+        this.db.any('INSERT INTO game_modes(mode_name, description) VALUES($1, $2)', [name, description]);
     }
 
     // Select all modes;
