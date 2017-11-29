@@ -1,6 +1,6 @@
-/*
- Users (users) table model
-*/
+/** 
+ * Users (users) table model
+ */
 
 const bcrypt = require('bcrypt');
 

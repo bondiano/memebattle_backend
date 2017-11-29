@@ -1,6 +1,6 @@
-/*
- Profiles (profiles) table model
-*/
+/**
+ * Profiles (profiles) table model
+ */
 
 class ProfilesRepository {
     constructor(db, pgp) {

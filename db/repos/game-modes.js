@@ -1,6 +1,6 @@
-/*
- Game modes (game_modes) table model
-*/
+/**
+ * Game modes (game_modes) table model
+ */
 
 class GameModesRepository {
     constructor(db, pgp){

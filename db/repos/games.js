@@ -1,6 +1,6 @@
-/*
- Games (games, played_memes, playres, winer_memes) table model
-*/
+/**
+ * Games (games, played_memes, playres, winer_memes) table model
+ */
 
 class GamesRepository {
     constructor(db, pgp) {

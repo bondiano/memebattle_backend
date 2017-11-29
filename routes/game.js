@@ -1,11 +1,12 @@
 const jwt_check = require('express-jwt');
 const redis = require('../redis')().redis;
 const parseHelper = require('../helpers').parseAction;
-/*
-site/game/* route:
-auth/modes GET
-game/rating POST
-*/
+/**
+ * site/game/* route:
+ * auth/modes GET
+ * game/rating POST
+ * games GET
+ */
 
 const secret = new Buffer(process.env.JWT_KEY, 'base64');
 const topCount = 10;

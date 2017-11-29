@@ -1,6 +1,6 @@
-/*
- Meme storage (meme_storage) table model
-*/
+/** 
+ * Meme storage (meme_storage) table model
+ */
 
 class MemeStorageRepository {
     constructor(db, pgp){

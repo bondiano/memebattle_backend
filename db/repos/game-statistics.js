@@ -1,6 +1,6 @@
-/*
- Game statistics (game_statistics) table model
-*/
+/**
+ * Game statistics (game_statistics) table model
+ */
 
 class GameStatisticsRepository {
     constructor(db, pgp) {

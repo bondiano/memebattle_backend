@@ -3,22 +3,24 @@ const jwt_check = require('express-jwt');
 const v4 = require('node-uuid').v4;
 require('dotenv').config({path: '../config/.env'});
 
-/*
-site/auth/* route:
-auth/login POST
-auth/signup POST
-auth/refresh-token POST
-auth/secret GET
-*/
+/**
+ * site/auth/* route:
+ * auth/login POST
+ * auth/signup POST
+ * auth/refresh-token POST
+ * auth/secret GET
+ */
 
-const secret = new Buffer(process.env.JWT_KEY, 'base64');
+// public key use for access token, and private for refresh token
+const secret_public = new Buffer(process.env.JWT_KEY, 'base64');
+const secret_private = new Buffer(process.env.JWT_PRI_KEY, 'base64');
 
 const payload_access = {
     iss: `/auth`,
     permissions: 'user',
 };
 const options_access = {
-    expiresIn: '3h',
+    expiresIn: '2h',
     jwtid: v4(),
 };
 const options_refresh = {
@@ -27,19 +29,18 @@ const options_refresh = {
 };
 
 module.exports = (app, db) => {
+
     // User login route, your CO
     app.post('/auth/login', (req, res) => {
         if(!req.body.username || !req.body.password){
             res.status(400).json({
                 success: false,
-                message: 'Please enter username and password.'
-            });
+                message: 'Please enter username and password.', });
             return;
         }
         const username = req.body.username;
         const password = req.body.password;
         db.users.isValidUserPassword(username, password).then(isValid => {
-            console.log(isValid)
             if(isValid){
                 // jwt: send two token: access, refresh and in expires_in unix timestamp
                 db.users.getId(username).then(data =>{
@@ -48,8 +49,8 @@ module.exports = (app, db) => {
                         iss: `/auth`,
                         _id: data.id,
                     };
-                    jwt.sign(payload_access, secret, options_access, (err, token_access) => {
-                        jwt.sign(payload_refresh, secret, options_refresh, (err, token_refresh) => {
+                    jwt.sign(payload_access, secret_public, options_access, (err, token_access) => {
+                        jwt.sign(payload_refresh, secret_private, options_refresh, (err, token_refresh) => {
                             db.users.setNewToken(username, token_refresh).then(() => {
                                 res.json({
                                     success: true,
@@ -63,20 +64,19 @@ module.exports = (app, db) => {
                     });
                 })
             } else {
-                throw "Username or password is not valid";
+                throw new Error("Username or password is not valid");
             }
         })
         .catch(error => {
             res.status(400).json({
                 success: false,
                 message: 'Please enter valid username or password.',
-                error: error.message || error
-            });
+                error: error.message || error, });
         });
     });
 
     // Route for create new tokens
-    app.post('/auth/refresh-token', (req, res) => {
+    app.post('/auth/refresh-token', jwt_check({ secret: secret_private }), (req, res) => {
         // inital time info
         const id = jwt.decode(req.body.token_refresh)._id;
         const exp = jwt.decode(req.body.token_refresh).exp;
@@ -92,8 +92,8 @@ module.exports = (app, db) => {
                         _id: data.id,
                     };
 
-                    jwt.sign(payload_access, secret, options_access, (err, token_access) => {
-                        jwt.sign(payload_refresh, secret, options_refresh, (err, token_refresh) => {
+                    jwt.sign(payload_access, secret_public, options_access, (err, token_access) => {
+                        jwt.sign(payload_refresh, secret_private, options_refresh, (err, token_refresh) => {
                             db.users.setNewToken(data.username, token_refresh).then(() => {
                             res.json({
                                 success: true,
@@ -114,7 +114,7 @@ module.exports = (app, db) => {
                         error: error.message || error, });
                 });
             } else {
-                throw "Error: token was expired";
+                throw new Error("Token was expired");
             }
         })
         .catch(error => {
@@ -127,12 +127,20 @@ module.exports = (app, db) => {
 
     // Users registeration route
     app.post('/auth/signup', (req, res) => {
-        if(!req.body.username || !req.body.email || !req.body.password){
+        if(!req.body.username || !req.body.email || !req.body.password) {
             res.status(400).json({
                 success: false,
-                message: 'Please enter username, email and password.'
-            });
+                message: 'Please enter username, email and password.', });
             return;
+        }
+
+        if(req.body.username < 3 || req.body.password < 3 || 
+            req.body.username > 20 || req.body.password === req.body.username ||
+            req.body.email.search(/.+@.+\..+/) < 0) {
+                res.status(400).json({
+                    success: false,
+                    message: 'Please enter valid username, email and password.', });
+                return;
         }
 
         let newUser = {
@@ -147,8 +155,7 @@ module.exports = (app, db) => {
             db.profiles.add(data.id).then(data => {
                 res.json({
                     success: true,
-                    message: 'You was registered',
-                });
+                    message: 'You was registered', });
             });
         }))
         .catch(error => {
@@ -166,13 +173,12 @@ module.exports = (app, db) => {
             res.status(400).json({
                 success: false,
                 message: message,
-                error: error.message || error
-            });
+                error: error.message || error, });
         });
     });
 
     // Test for token. Must use Authorization: Bearer <token> in header
-    app.get('/auth/secret', jwt_check({ secret: secret }), (req, res) => {
+    app.get('/auth/secret', jwt_check({ secret: secret_public }), (req, res) => {
         console.log(req.user.permissions);
         res.sendStatus(200);
     });
