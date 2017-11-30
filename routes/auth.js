@@ -111,6 +111,7 @@ module.exports = (app, db) => {
                 .catch(error => {
                     res.status(400).json({
                         success: false,
+                        message: "No user with such id in db",
                         error: error.message || error, });
                 });
             } else {
@@ -130,16 +131,18 @@ module.exports = (app, db) => {
         if(!req.body.username || !req.body.email || !req.body.password) {
             res.status(400).json({
                 success: false,
-                message: 'Please enter username, email and password.', });
+                message: 'Please enter username, email and password.',
+                error: 'Error', });
             return;
         }
 
-        if(req.body.username < 3 || req.body.password < 3 || 
-            req.body.username > 20 || req.body.password === req.body.username ||
+        if(req.body.username.length < 3 || req.body.password.length < 3 || 
+            req.body.username.length > 20 || req.body.password === req.body.username ||
             req.body.email.search(/.+@.+\..+/) < 0) {
                 res.status(400).json({
                     success: false,
-                    message: 'Please enter valid username, email and password.', });
+                    message: 'Please enter valid username, email and password.',
+                    error: 'Error', });
                 return;
         }
 
