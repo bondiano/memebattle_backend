@@ -52,13 +52,16 @@ module.exports = (app, db) => {
                     jwt.sign(payload_access, secret_public, options_access, (err, token_access) => {
                         jwt.sign(payload_refresh, secret_private, options_refresh, (err, token_refresh) => {
                             db.users.setNewToken(username, token_refresh).then(() => {
-                                res.json({
-                                    success: true,
-                                    _id: data.id,
-                                    username: username,
-                                    permissions: 'user',
-                                    token_access: token_access,
-                                    token_refresh: token_refresh, });
+                                db.users.getUserCoinCount(data.id).then(coin => {
+                                    res.json({
+                                        success: true,
+                                        _id: data.id,
+                                        username: username,
+                                        permissions: 'user',
+                                        coins: coin.coins,
+                                        token_access: token_access,
+                                        token_refresh: token_refresh, });
+                                });
                             });
                         });
                     });

@@ -104,6 +104,11 @@ class UsersRepository {
         return this.db.one('SELECT count(*) FROM repository  users', [], a => +a.count);
     }
 
+    // Return user coin count
+    getUserCoinCount(id){
+        return this.db.one('SELECT profiles.coins_count AS coins FROM users INNER JOIN profiles ON users.id = profiles.user_id WHERE users.id = $1', id)
+    }
+
     // Returns the total user order in coins-count top;
     getUserWithRating(id) {
         return this.db.one('SELECT rating, username, coins FROM (SELECT id, row_number() OVER () as rating, username, coins FROM (SELECT users.id AS id, users.username AS username, profiles.coins_count AS coins FROM users INNER JOIN profiles ON users.id = profiles.user_id ORDER BY profiles.coins_count DESC) AS top) AS toplist WHERE id = $1', id);
