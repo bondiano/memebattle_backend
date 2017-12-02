@@ -30,7 +30,6 @@ const dispatcher = (io) => {
                 console.log('choose dispatch');
                 io.to(`game:${data.game_id}`).emit(types.CHOOSE_MEM, msg);
                 return;
-            case types
         }
     });
 };

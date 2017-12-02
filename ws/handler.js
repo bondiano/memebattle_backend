@@ -19,16 +19,21 @@ function initData(_data, toCheck) {
     }
 }
 
+const gameInitState = (data) => ({
+    status: 'created',
+    ...data
+});
+
 const createGame = async function (_data) {
     const data = initData(_data, ['mode']);
     const id = await pgdb.games.add(1, 1).then(answer => (answer[0].id));
-    await redis.hmset(`game:${id}:${data.mode}`, {status: 'created', mode: data.mode});
+    await redis.hmset(`game:${id}:${data.mode}`, gameInitState({mode: data.mode}));
     redis.publish(`action:${types.CREATE_GAME}`, JSON.stringify(id));
 };
 
 const connectToGame = (socket, _data) => {
     console.log('CONNECT_TO_GAME', _data);
-    const data = initData(_data, ['user_id', 'data.game_id']);
+    const data = initData(_data, ['user_id', 'game_id']);
     socket.join(`game:${data.game_id}`);
     redis.publish('action:CONNECT_TO_GAME', JSON.stringify({...data, socketId: socket.id}));
 };
@@ -45,6 +50,7 @@ const chooseMem = _data => {
 };
 
 const onConnect = socket => {
+    console.log(socket.id);
     socket.on(types.CREATE_GAME, createGame);
     socket.on(types.CONNECT_TO_GAME, connectToGame.bind(undefined, socket));
     socket.on(types.LEAVE_FROM_GAME, leaveFromGame.bind(undefined, socket));
