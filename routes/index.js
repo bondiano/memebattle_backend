@@ -35,4 +35,13 @@ module.exports = (app, db) => {
         next(err);
     });
 
+    app.use(function (err, req, res, next) {
+        if (err.name === 'UnauthorizedError') {
+          res.status(401).json({
+            success: false,
+            name: 'LOGINERR',
+            error: err.name,
+        });
+        }
+    });
 };

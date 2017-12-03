@@ -4,7 +4,7 @@
   "description": "Backend for membattle project",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon --inspect app.js",
+    "dev": "nodemon --inspect app.js -host 0.0.0.0",
     "start": "node app.js"
   },
   "dependencies": {
