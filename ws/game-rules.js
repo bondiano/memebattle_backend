@@ -16,12 +16,12 @@ const unlimitedBattle = (gameId) => {
             if(result) {
                 return result;
             } else {
-                redis.hmset(`game:${gameId}:1`, { [key]: defaultVal }); 
+                redis.hmset(`game:${gameId}:1`, { [key]: defaultVal });
                 return defaultVal;
             }
         }).catch(err => {
             console.log(err);
-            redis.hmset(`game:${gameId}:1`, { [key]: defaultVal }); 
+            redis.hmset(`game:${gameId}:1`, { [key]: defaultVal });
             return defaultVal;
         });
     };
@@ -46,9 +46,9 @@ const unlimitedBattle = (gameId) => {
         const rightMemeImg = await redisHget('rightMemeImg', rightImg);
 
         await console.log(rightMemeImg);
-        return await { leftId: leftMemeId, 
-                leftImg: leftMemeImg, 
-                rightId: rightMemeId, 
+        return await { leftId: leftMemeId,
+                leftImg: leftMemeImg,
+                rightId: rightMemeId,
                 rightImg: rightMemeImg,
                 rightLikes: rightLikes,
                 leftLikes: leftLikes, };
@@ -66,7 +66,7 @@ const unlimitedBattle = (gameId) => {
             return 1;
         }
         return { rightLikes: rightLikes,
-                leftLikes: leftLikes, 
+                leftLikes: leftLikes,
                 winner, };
     };
 
@@ -76,17 +76,18 @@ const unlimitedBattle = (gameId) => {
 
         if(currentPair.rightId >= lastId) {
             lastId += pairCount;
-            redis.hmset(`game:${gameId}:1`, { lastId: lastId });
+            redis.hmset(`game:${gameId}:1`, { lastId: lastId }); //return promise. Next line start before this line
             init();
             // TODO: Check if mems in db not enought
         }
 
-        redis.hmset(`game:${gameId}:1`, { leftId: redisHget('leftMemeId', 1) + 2 });
-        redis.hmset(`game:${gameId}:1`, { leftImg: redisHget('rightMemeImg', redisHget(leftMemeId, 2)) });
-        redis.hmset(`game:${gameId}:1`, { rightId: redisHget('rightMemeId', 2) + 2 });
-        redis.hmset(`game:${gameId}:1`, { leftImg: redisHget('rightMemeImg', redisHget(rightMemeId, 2)) });
-        redis.hmset(`game:${gameId}:1`, { rightLikes: 0 });
-        redis.hmset(`game:${gameId}:1`, { leftLikes: 0 });
+        redis.hmset(`game:${gameId}:1`, {
+            leftId: await redisHget('leftMemeId', 1) + 2,
+            leftImg: await redisHget('rightMemeImg', await redisHget(leftMemeId, 2)),
+            rightId: await redisHget('rightMemeId', 2) + 2,
+            rightLikes: 0,
+            leftLikes: 0,
+        });
     };
 
     const addMemeLikes = async function(right) { // 0 - left, 1 - right
@@ -105,7 +106,7 @@ const unlimitedBattle = (gameId) => {
     }
 };
 
-const gameModeHandler = (modeId, gameId) => { 
+const gameModeHandler = (modeId, gameId) => {
     switch(+modeId) {
         case 1: // unlimited battle
             return unlimitedBattle(gameId);
