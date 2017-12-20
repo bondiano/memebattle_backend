@@ -17,8 +17,11 @@ module.exports = (app, db) => {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
         <script>
             const socket = io();
+            socket.on('connect', () => console.log('success'));         
             socket.on('CHOOSE_MEM', data => console.log('CHOOSE_MEM', JSON.parse(data)));
             socket.on('CONNECT_TO_GAME', data => console.log('CONNECT', JSON.parse(data)));
+            socket.on('GET_MEM_PAIR', data => console.log('GET_MEM_PAIR', JSON.parse(data)));            
+            socket.on('error', e => console.log('Error: ' + (e ? e : 'unknown error')));
         </script>
 
         </body>
@@ -35,4 +38,14 @@ module.exports = (app, db) => {
         next(err);
     });
 
+    app.use(function (err, req, res, next) {
+        if (err.name === 'UnauthorizedError') {
+            res.status(401).json({
+                success: false,
+                name: 'LOGINERR',
+                message: "Auth error",
+                error: err.name,
+            });
+        }
+    });
 };

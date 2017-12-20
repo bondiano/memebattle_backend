@@ -35,6 +35,7 @@ module.exports = (app, db) => {
         if(!req.body.username || !req.body.password){
             res.status(400).json({
                 success: false,
+                name: 'NOREQINPUT',
                 message: 'Please enter username and password.', });
             return;
         }
@@ -73,6 +74,7 @@ module.exports = (app, db) => {
         .catch(error => {
             res.status(400).json({
                 success: false,
+                name: 'NOTVALID',
                 message: 'Please enter valid username or password.',
                 error: error.message || error, });
         });
@@ -106,6 +108,7 @@ module.exports = (app, db) => {
                             .catch(error => {
                                 res.status(400).json({
                                 success: false,
+                                name: 'SETTOKENERR',
                                 error: error.message || error, });
                             });
                         });
@@ -114,17 +117,19 @@ module.exports = (app, db) => {
                 .catch(error => {
                     res.status(400).json({
                         success: false,
-                        message: "No user with such id in db",
+                        name: 'NOTSUCHID',
+                        message: 'No user with such id in db',
                         error: error.message || error, });
                 });
             } else {
-                throw new Error("Token was expired");
+                throw new Error('Token was expired');
             }
         })
         .catch(error => {
             res.status(400).json({
                 success: false,
-                message: "Token is not valid, You must login again",
+                name: 'NOTVALIDTOKEN',
+                message: 'Token is not valid, you must login again',
                 error: error.message || error, });
         });
     });
@@ -134,6 +139,7 @@ module.exports = (app, db) => {
         if(!req.body.username || !req.body.email || !req.body.password) {
             res.status(400).json({
                 success: false,
+                name: 'NOREQINPUT',
                 message: 'Please enter username, email and password.',
                 error: 'Error', });
             return;
@@ -144,6 +150,7 @@ module.exports = (app, db) => {
             req.body.email.search(/.+@.+\..+/) < 0) {
                 res.status(400).json({
                     success: false,
+                    name: 'NOTVALID',
                     message: 'Please enter valid username, email and password.',
                     error: 'Error', });
                 return;
@@ -166,18 +173,23 @@ module.exports = (app, db) => {
         }))
         .catch(error => {
             let message;
+            let name;
             switch(error.constraint){
                 case 'users_username_key':
                     message = 'User with this username already exists';
+                    namr = 'EXTUSR';
                     break;
                 case 'users_email_key':
                     message = 'User with this email already exists';
+                    name = 'EXTEMAIL';
                     break;
                 default:
                     message = 'Unexpectedly error';
+                    name = 'UNXPERR';
             }
             res.status(400).json({
                 success: false,
+                name: name,
                 message: message,
                 error: error.message || error, });
         });
@@ -186,6 +198,9 @@ module.exports = (app, db) => {
     // Test for token. Must use Authorization: Bearer <token> in header
     app.get('/auth/secret', jwt_check({ secret: secret_public }), (req, res) => {
         console.log(req.user.permissions);
-        res.sendStatus(200);
+        res.status(200).json({
+            success: true,
+            name: 'LOGINSUC',
+        });
     });
-};
+}
