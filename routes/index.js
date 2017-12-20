@@ -20,6 +20,7 @@ module.exports = (app, db) => {
             socket.on('connect', () => console.log('success'));         
             socket.on('CHOOSE_MEM', data => console.log('CHOOSE_MEM', JSON.parse(data)));
             socket.on('CONNECT_TO_GAME', data => console.log('CONNECT', JSON.parse(data)));
+            socket.on('GET_MEM_PAIR', data => console.log('GET_MEM_PAIR', JSON.parse(data)));            
             socket.on('error', e => console.log('Error: ' + (e ? e : 'unknown error')));
         </script>
 
