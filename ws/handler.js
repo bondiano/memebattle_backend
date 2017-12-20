@@ -34,8 +34,10 @@ const createGame = async function (_data) {
 const connectToGame = (socket, _data) => {
     console.log('CONNECT_TO_GAME', _data);
     const data = initData(_data, ['user_id', 'game_id']);
-    socket.join(`game:${data.game_id}`);
-    redis.publish('action:CONNECT_TO_GAME', JSON.stringify({...data, socketId: socket.id}));
+    redis.hgetall(`game:${data.game_id}`).then(game => {
+        socket.join(`game:${data.game_id}`);
+        redis.publish('action:CONNECT_TO_GAME', JSON.stringify({...data, socketId: socket.id}));
+    });
 };
 
 const leaveFromGame = (socket, _data) => {
