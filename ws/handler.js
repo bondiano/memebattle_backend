@@ -1,11 +1,14 @@
 const redis = require('../redis')().redis;
 const types = require('./types');
 const pgdb = require('../db/pg-db');
+const initRules = require('./game-rules');
 
 function initData(_data, toCheck) {
-    let data = undefined;
+    let data = _data;
     try {
-        data = JSON.parse(_data);
+        if(typeof _data == "string"){
+            data = JSON.parse(data);
+        }
         toCheck && toCheck.forEach((arg) => {
             if (!data.hasOwnProperty(arg)) {
                 throw new Error('props error');
@@ -25,10 +28,12 @@ const gameInitState = (data) => ({
 });
 
 const createGame = async function (_data) {
+    console.log('CREATE_GAME', _data);    
     const data = initData(_data, ['mode']);
     const id = await pgdb.games.add(1, 1).then(answer => (answer[0].id));
     await redis.hmset(`game:${id}:${data.mode}`, gameInitState({mode: data.mode}));
     redis.publish(`action:${types.CREATE_GAME}`, JSON.stringify(id));
+    initRules(data.mode, id);
 };
 
 const connectToGame = (socket, _data) => {
@@ -41,7 +46,7 @@ const connectToGame = (socket, _data) => {
 const leaveFromGame = (socket, _data) => {
     const data = initData(_data, ['user_id', 'game_id']);
     socket.leave(`game:${data.game_id}`);
-    redis.publish(types.LEAVE_FROM_GAME, _data);
+    redis.publish('action:LEAVE_FROM_GAME', _data);
 };
 
 const chooseMem = _data => {
@@ -49,15 +54,27 @@ const chooseMem = _data => {
     redis.publish('action:CHOOSE_MEM', _data);
 };
 
+const getMemPair = () => {
+    
+};
+
+const pairWinner = () => {
+
+};
+
+const disconnected = () => {
+    console.log('DISCONNECT');
+};
+
 const onConnect = socket => {
-    console.log(socket.id);
+    console.log('Socket ID:', socket.id);
     socket.on(types.CREATE_GAME, createGame);
     socket.on(types.CONNECT_TO_GAME, connectToGame.bind(undefined, socket));
     socket.on(types.LEAVE_FROM_GAME, leaveFromGame.bind(undefined, socket));
     socket.on(types.CHOOSE_MEM, chooseMem);
-    socket.on('disconnect', () => {
-        console.log('DISCONNECT')
-    });
+    socket.on(types.GET_MEM_PAIR, getMemPair);
+    socket.on(types.PAIR_WINNER, pairWinner);
+    socket.on('disconnect', disconnected);
 };
 
 module.exports = (io) => {

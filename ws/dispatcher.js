@@ -30,6 +30,14 @@ const dispatcher = (io) => {
                 console.log('choose dispatch');
                 io.to(`game:${data.game_id}`).emit(types.CHOOSE_MEM, msg);
                 return;
+            case types.GET_MEM_PAIR:
+                console.log('get mem pair dispatch');
+                io.to(`game:${data.game_id}`).emit(types.GET_MEM_PAIR, msg);
+                return;
+            case types.PAIR_WINNER:
+                console.log('pair winner dispatcher');
+                io.to(`game:${data.game_id}`).emit(types.PAIR_WINNER, msg);
+                return;
         }
     });
 };
