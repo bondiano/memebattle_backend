@@ -29,7 +29,7 @@ const gameInitState = (data) => ({
 
 const createGame = async function (_data) {
     console.log('CREATE_GAME', _data);    
-    const data = initData(_data, ['mode']);
+    const data = await initData(_data, ['mode']);
     const id = await pgdb.games.add(1, 1).then(answer => (answer[0].id));
     /* TODO: Change last arg for redis name */
     await redis.hmset(`game:${id}:${data.mode}`, gameInitState({mode: data.mode}));
@@ -50,50 +50,51 @@ const leaveFromGame = (socket, _data) => {
     console.log('LEAVE_FROM_GAME ', _data);
     const data = initData(_data, ['user_id', 'game_id']);
     socket.leave(`game:${data.game_id}`);
-    redis.publish(`action:${types.LEAVE_FROM_GAME}`, _data);
+    redis.publish(`action:${types.LEAVE_FROM_GAME}`, JSON.stringify({_data}));
 };
 
 const chooseMem = async function (_data) {
-    let data = initData(_data, ['user_id', 'right', 'mem_id', 'game_id']);
+    let data = await initData(_data, ['user_id', 'right', 'mem_id', 'game_id']);
     const mode = await redis.hget(`game:${data.game_id}:1`, 'mode').then(data => (data));    
     await rules(mode, data.game_id).addMemeLikes(data.right, data.user_id);
     // TODO: fix possible extra charge for 1 user
-    redis.publish(`action:${types.CHOOSE_MEM}`, JSON.stringify({...data, _data}));
+    await redis.publish(`action:${types.CHOOSE_MEM}`, JSON.stringify({...data, _data}));
 };
 
 const getMemPair = async function (_data) {
     const data = initData(_data, ['user_id', 'game_id']);
     const mode = await redis.hget(`game:${data.game_id}:1`, 'mode').then(data => (data));
     const pair = await rules(mode, data.game_id).getCurrentPair();
-    redis.publish(`action:${types.GET_MEM_PAIR}`, JSON.stringify({...data, ...pair}));
+    await redis.publish(`action:${types.GET_MEM_PAIR}`, JSON.stringify({...data, ...pair}));
 };
 
 const disconnected = () => {
     console.log('DISCONNECT');
 };
 
-const actionsHandler = async function (socket, _data) {
-    let data = await initData(_data, ['type']);
-    await console.log(data);
+const actionsHandler = (socket, _data) => {
+    let data = initData(_data, ['type']);
+    console.log(data);
+    
     switch(data.type) {
-        case '@@ws/'+types.CONNECT_TO_GAME:
-            await connectToGame(socket, _data);
+        case `@@ws/${types.CONNECT_TO_GAME}`:
+            connectToGame(_data).bind(undefined, socket);
             return;
-        case '@@ws/'+types.LEAVE_FROM_GAME:
-            await leaveFromGame(socket, _data);
+        case `@@ws/${types.LEAVE_FROM_GAME}`:
+            leaveFromGame(_data).bind(undefined, socket);
             return;
-        case '@@ws/'+types.CHOOSE_MEM:
-            await connectToGame(socket, _data);
+        case `@@ws/${types.CHOOSE_MEM}`:
+            chooseMem(_data);
             return;
-        case '@@ws/'+types.GET_MEM_PAIR:
-            await connectToGame(socket, _data);
+        case `@@ws/${types.GET_MEM_PAIR}`:
+            getMemPair(_data);
             return;
     }
 };
 
 const onConnect = socket => {
     console.log('Socket ID:', socket.id);
-    socket.on('action', actionsHandler.bind(undefined, socket));
+    socket.on('action', actionsHandler.bind(socket));
     socket.on(types.CREATE_GAME, createGame);
     socket.on(types.CONNECT_TO_GAME, connectToGame.bind(undefined, socket));
     socket.on(types.LEAVE_FROM_GAME, leaveFromGame.bind(undefined, socket));
