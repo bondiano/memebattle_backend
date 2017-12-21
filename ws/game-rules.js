@@ -136,6 +136,11 @@ const unlimitedBattle = (gameId) => {
     };
 
     const gameloop = async function() {
+        /* TODO: Make it normal */
+        if(gameId === 0) {
+            await redis.hmset(`game:0:1`, { status: 'created', mode: 1});
+        }
+
         const memeInDb = await pgdb.memeStorage.count().then(data => (data));
         await init();
         let lastId = + await redisHget('lastId', 0);

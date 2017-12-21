@@ -32,6 +32,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 require('./routes')(app, pgdb);
 require('./ws')(io);
 
+/* Start unlimited battle */
+require('./ws/game-rules')(1, 0).gameloop();
+
 module.exports = {
     server,
     port,
