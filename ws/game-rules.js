@@ -87,7 +87,7 @@ const unlimitedBattle = (gameId) => {
         const rightMemeImg = await redisHget(rightMemeId, 2);
 
         // TODO: CLEAR REDIS!
-        // await redis.del(`game:${gameId}:1`);
+        await redis.hdel(`game:${gameId}:1`, leftMemeId - 2, [rightMemeId - 2]);
         
         redis.hmset(`game:${gameId}:1`, {
             leftMemeId: leftMemeId,
