@@ -66,7 +66,6 @@ const unlimitedBattle = (gameId) => {
         } else {
             winner = 1;
         }
-        // TODO: Clear REDIS!
         return { rightLikes: rightLikes,
                 leftLikes: leftLikes,
                 winner: winner, };
@@ -79,7 +78,6 @@ const unlimitedBattle = (gameId) => {
         if(currentPair.rightMemeId >= lastId) {
             lastId += pairCount;
             await redis.hmset(`game:${gameId}:1`, { lastId: lastId }); //return promise. Next line start before this line
-            // TODO: CLEAR REDIS
             await init();
         }
 
@@ -88,6 +86,9 @@ const unlimitedBattle = (gameId) => {
         const leftMemeImg = await redisHget(leftMemeId, 1);
         const rightMemeImg = await redisHget(rightMemeId, 2);
 
+        // TODO: CLEAR REDIS!
+        // await redis.del(`game:${gameId}:1`);
+        
         redis.hmset(`game:${gameId}:1`, {
             leftMemeId: leftMemeId,
             leftMemeImg: leftMemeImg,
@@ -95,8 +96,8 @@ const unlimitedBattle = (gameId) => {
             rightMemeImg: rightMemeImg,
             rightLikes: 0,
             leftLikes: 0,
-            voitedRight: '-1',
-            voitedLeft: '-1',
+            voitedRight: '0',
+            voitedLeft: '0',
         });
     };
 
@@ -104,12 +105,12 @@ const unlimitedBattle = (gameId) => {
         if (right) { // TODO: normal check by mem id
             await redis.hmset(`game:${gameId}:1`, { 
                 rightLikes: + await redisHget('rightLikes', 0) + 1,
-                voitedRight: await redisHget('voitedRight', -1) + `:${userId}`,
+                voitedRight: await redisHget('voitedRight', 0) + `:${userId}`,
             });
         } else {
             await redis.hmset(`game:${gameId}:1`, { 
                 leftLikes: + await redisHget('leftLikes', 0) + 1,
-                voitedLeft: await redisHget('voitedLeft', -1) + `:${userId}`,
+                voitedLeft: await redisHget('voitedLeft', 0) + `:${userId}`,
             });
         }
     };
@@ -117,12 +118,12 @@ const unlimitedBattle = (gameId) => {
     const addMemcoins = async function(winner) {
         let usersId = "";
         if (winner === 0) {
-            usersId = await redisHget('voitedLeft', -1);
+            usersId = await redisHget('voitedLeft', 0);
         } else if (winner === 1) {
-            usersId = await redisHget('voitedRight', -1);
+            usersId = await redisHget('voitedRight', 0);
         }
         await usersId.split(':').forEach((el) => {
-            if(el > 0) {
+            if(el) {
                 pgdb.profiles.addCoin(el, 1);
             }
         })
@@ -134,6 +135,12 @@ const unlimitedBattle = (gameId) => {
             addMemcoins(winData.winner);
             await redis.publish(`action:${types.PAIR_WINNER}`, JSON.stringify({ game_id: gameId, ...winData}));            
         }, waitVoiterDelay);
+    };
+
+    const sendFirstPair = async function() {
+        const pair = await getCurrentPair();
+        await redis.publish(`action:${types.NEW_PAIR}`, JSON.stringify({ game_id: gameId, ...pair}));
+        await sendWinner(gameId);
     };
 
     const gameloop = async function() {
@@ -148,18 +155,18 @@ const unlimitedBattle = (gameId) => {
         let lastId = + await redisHget('lastId', 0);
         let pair = await getCurrentPair();
 
-        //sendWinner(gameId);
+        await sendFirstPair();
         setInterval(async function() {
-            await sendWinner(gameId);
             await setNewPair();
             pair = await getCurrentPair();
             await redis.publish(`action:${types.NEW_PAIR}`, JSON.stringify({ game_id: gameId, ...pair}));        
             lastId = + await redisHget('lastId', 0);    
             if(lastId + pairCount >= memeInDb.count) {
-                    lastId = 0;
-                    console.log("Memes in db is finished");
-                    await redis.hset(`game:${gameId}:1`, { lastId: lastId });
+                lastId = 0;
+                console.log("Memes in db is finished");
+                await redis.hset(`game:${gameId}:1`, { lastId: lastId });
             }
+            await sendWinner(gameId);
         }, waitNextPairTimer);
     };
 
