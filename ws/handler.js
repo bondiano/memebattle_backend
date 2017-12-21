@@ -72,8 +72,28 @@ const disconnected = () => {
     console.log('DISCONNECT');
 };
 
+const actionsHandler = async function (socket, _data) {
+    let data = await initData(_data, ['type']);
+    await console.log(data);
+    switch(data.type) {
+        case '@@ws/'+types.CONNECT_TO_GAME:
+            await connectToGame(socket, _data);
+            return;
+        case '@@ws/'+types.LEAVE_FROM_GAME:
+            await leaveFromGame(socket, _data);
+            return;
+        case '@@ws/'+types.CHOOSE_MEM:
+            await connectToGame(socket, _data);
+            return;
+        case '@@ws/'+types.GET_MEM_PAIR:
+            await connectToGame(socket, _data);
+            return;
+    }
+};
+
 const onConnect = socket => {
     console.log('Socket ID:', socket.id);
+    socket.on('action', actionsHandler.bind(undefined, socket));
     socket.on(types.CREATE_GAME, createGame);
     socket.on(types.CONNECT_TO_GAME, connectToGame.bind(undefined, socket));
     socket.on(types.LEAVE_FROM_GAME, leaveFromGame.bind(undefined, socket));

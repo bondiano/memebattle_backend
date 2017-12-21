@@ -16,31 +16,31 @@ const dispatcher = (io) => {
                 return;
             case types.CONNECT_TO_GAME:
                 console.log('connect dispatcher');
-                io.to(`game:${data.game_id}`).emit(types.CONNECT_TO_GAME, msg);
+                io.to(`game:${data.game_id}`).emit('action', {type: types.CONNECT_TO_GAME, ...msg});
                 return;
             case types.LEAVE_FROM_GAME:
                 console.log('leave dispatcher');
-                io.to(`game:${data.game_id}`).emit(types.LEAVE_FROM_GAME, msg);
+                io.to(`game:${data.game_id}`).emit('action', {type: types.LEAVE_FROM_GAME, ...msg});
                 return;
             case types.START_GAME:
                 console.log('start dispatcher');
-                io.to(`game:${data.game_id}`).emit(types.START_GAME, msg);
+                io.to(`game:${data.game_id}`).emit('action', {type: types.START_GAME, ...msg});                
                 return;
             case types.CHOOSE_MEM:
                 console.log('choose dispatcher');
-                io.to(`game:${data.game_id}`).emit(types.CHOOSE_MEM, msg);
+                io.to(`game:${data.game_id}`).emit('action', {type: types.CHOOSE_MEM, ...msg});                
                 return;
             case types.GET_MEM_PAIR:
                 console.log('get mem pair dispatcher');
-                io.to(`game:${data.game_id}`).emit(types.GET_MEM_PAIR, msg);
+                io.to(`game:${data.game_id}`).emit('action', {type: types.GET_MEM_PAIR, ...msg});                
                 return;
             case types.NEW_PAIR:
                 console.log('new mem pair dispatcher');
-                io.to(`game:${data.game_id}`).emit(types.NEW_PAIR, msg);
+                io.to(`game:${data.game_id}`).emit('action', {type: types.NEW_PAIR, ...msg});                
                 return;
             case types.PAIR_WINNER:
                 console.log('pair winner dispatcher');
-                io.to(`game:${data.game_id}`).emit(types.PAIR_WINNER, msg);
+                io.to(`game:${data.game_id}`).emit('action', {type: types.PAIR_WINNER, ...msg});                
                 return;
         }
     });

@@ -164,7 +164,13 @@ const unlimitedBattle = (gameId) => {
             if(lastId + pairCount >= memeInDb.count) {
                 lastId = 0;
                 console.log("Memes in db is finished");
-                await redis.hset(`game:${gameId}:1`, { lastId: lastId });
+                const leftMemeImg = await redisHget(1, 1);
+                const rightMemeImg = await redisHget(2, 2);
+                await redis.hmset(`game:${gameId}:1`, { lastId: lastId, 
+                    leftMemeId: 1,
+                    leftMemeId: 2,
+                    leftMemeImg: leftMemeImg,
+                    rightMemeImg: rightMemeImg, });
             }
             await sendWinner(gameId);
         }, waitNextPairTimer);
