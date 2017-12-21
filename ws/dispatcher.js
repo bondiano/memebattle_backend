@@ -34,6 +34,10 @@ const dispatcher = (io) => {
                 console.log('get mem pair dispatcher');
                 io.to(`game:${data.game_id}`).emit(types.GET_MEM_PAIR, msg);
                 return;
+            case types.NEW_PAIR:
+                console.log('new mem pair dispatcher');
+                io.to(`game:${data.game_id}`).emit(types.NEW_PAIR, msg);
+                return;
             case types.PAIR_WINNER:
                 console.log('pair winner dispatcher');
                 io.to(`game:${data.game_id}`).emit(types.PAIR_WINNER, msg);

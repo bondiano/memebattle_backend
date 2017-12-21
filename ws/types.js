@@ -5,5 +5,6 @@ module.exports = {
     LEAVE_FROM_GAME: 'LEAVE_FROM_GAME',
     CHOOSE_MEM: 'CHOOSE_MEM',
     GET_MEM_PAIR: 'GET_MEM_PAIR',
+    NEW_PAIR: 'NEW_PAIR',
     PAIR_WINNER: 'PAIR_WINNER',
 };

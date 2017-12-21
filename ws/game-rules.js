@@ -1,10 +1,12 @@
-
 const pgdb = require('../db/pg-db');
 const redis = require('../redis')().redis;
+const types = require('./types');
 /* TODO: Replace this with Game mods class */
 
 const unlimitedBattle = (gameId) => {
     const pairCount = 32;
+    const waitVoiterDelay = 15000; // ms
+    const waitNextPairTimer = 20000; // ms
 
     const redisHget = (key, defaultVal) => {
         return redis.hget(`game:${gameId}:1`, key).then(result => {
@@ -27,7 +29,7 @@ const unlimitedBattle = (gameId) => {
     };
 
     const init = async function() {
-        let lastId = await redisHget('lasrId', 0);
+        let lastId = + await redisHget('lastId', 0);
 
         let memeStorage = await pgdb.memeStorage.get(lastId, pairCount).then(data => (data)); // TODO: FIX TO dynamic
         await memeStorage.forEach(el => {
@@ -45,61 +47,116 @@ const unlimitedBattle = (gameId) => {
         const leftMemeImg = await redisHget('leftMemeImg', leftImg);
         const rightMemeImg = await redisHget('rightMemeImg', rightImg);
 
-        await console.log(rightMemeImg);
-        return await { leftId: leftMemeId,
-                leftImg: leftMemeImg,
-                rightId: rightMemeId,
-                rightImg: rightMemeImg,
+        return await { leftMemeId: leftMemeId,
+                leftMemeImg: leftMemeImg,
+                rightMemeId: rightMemeId,
+                rightMemeImg: rightMemeImg,
                 rightLikes: rightLikes,
                 leftLikes: leftLikes, };
     };
 
     const getPairWinner = async function() {
-        const leftLikes = redisHget('leftLikes', 0);
-        const rightLikes = redisHget('rightLikes', 0);
+        const leftLikes = await redisHget('leftLikes', 0);
+        const rightLikes = await redisHget('rightLikes', 0);
         let winner = 0;
         if (leftLikes === rightLikes) {
-            return 2;
+            winner = 2;
         } else if (leftLikes > rightLikes) {
-            return 0;
+            winner = 0;
         } else {
-            return 1;
+            winner = 1;
         }
         return { rightLikes: rightLikes,
                 leftLikes: leftLikes,
-                winner, };
+                winner: winner, };
     };
 
     const setNewPair = async function() {
-        let currentPair = getCurrentPair();
-        let lastId = redisHget('lastId', 0);
+        let currentPair = await getCurrentPair();
+        let lastId = + await redisHget('lastId', 0);
 
-        if(currentPair.rightId >= lastId) {
+        if(currentPair.rightMemeId >= lastId) {
             lastId += pairCount;
-            redis.hmset(`game:${gameId}:1`, { lastId: lastId }); //return promise. Next line start before this line
-            init();
-            // TODO: Check if mems in db not enought
+            await redis.hmset(`game:${gameId}:1`, { lastId: lastId }); //return promise. Next line start before this line
+            // TODO: CLEAR REDIS
+            await init();
         }
 
+        const leftMemeId = + await redisHget('leftMemeId', 1) + 2;
+        const rightMemeId = + await redisHget('rightMemeId', 2) + 2;
+        const leftMemeImg = await redisHget(leftMemeId, 1);
+        const rightMemeImg = await redisHget(rightMemeId, 2);
+
         redis.hmset(`game:${gameId}:1`, {
-            leftId: await redisHget('leftMemeId', 1) + 2,
-            leftImg: await redisHget('rightMemeImg', await redisHget(leftMemeId, 2)),
-            rightId: await redisHget('rightMemeId', 2) + 2,
+            leftMemeId: leftMemeId,
+            leftMemeImg: leftMemeImg,
+            rightMemeId: rightMemeId,
+            rightMemeImg: rightMemeImg,
             rightLikes: 0,
             leftLikes: 0,
+            voitedRight: '-1',
+            voitedLeft: '-1',
         });
     };
 
-    const addMemeLikes = async function(right) { // 0 - left, 1 - right
+    const addMemeLikes = async function(right, userId) { // 0 - left, 1 - right
         if (right) { // TODO: normal check by mem id
-            redis.hmset(`game:${gameId}:1`, { rightLikes: redisHget('rightLikes', 0) + 1 });
+            await redis.hmset(`game:${gameId}:1`, { 
+                rightLikes: + await redisHget('rightLikes', 0) + 1,
+                voitedRight: await redisHget('voitedRight', -1) + `:${userId}`,
+            });
         } else {
-            redis.hmset(`game:${gameId}:1`, { leftLikes: redisHget('leftLikes', 0) + 1 });
+            await redis.hmset(`game:${gameId}:1`, { 
+                leftLikes: + await redisHget('leftLikes', 0) + 1,
+                voitedLeft: await redisHget('voitedLeft', -1) + `:${userId}`,
+            });
         }
     };
 
+    const addMemcoins = async function(winner) {
+        let usersId = "";
+        if (winner === 0) {
+            usersId = await redisHget('voitedLeft', -1);
+        } else if (winner === 1) {
+            usersId = await redisHget('voitedRight', -1);
+        }
+        await usersId.split(':').forEach((el) => {
+            if(el > 0) {
+                pgdb.profiles.addCoin(el, 1);
+            }
+        })
+    };
+
+    const sendWinner = async function() {
+        setTimeout(async function() {
+            const winData = await getPairWinner();
+            addMemcoins(winData.winner);
+            await redis.publish(`action:${types.PAIR_WINNER}`, JSON.stringify({ game_id: gameId, ...winData}));            
+        }, waitVoiterDelay);
+    };
+
+    const gameloop = async function() {
+        const memeInDb = await pgdb.memeStorage.count().then(data => (data));
+        await init();
+        let lastId = + await redisHget('lastId', 0);
+        let pair = await getCurrentPair();
+
+        sendWinner(gameId);
+        setInterval(async function() {
+            await sendWinner(gameId);
+            await setNewPair();
+            pair = await getCurrentPair();
+            await redis.publish(`action:${types.NEW_PAIR}`, JSON.stringify({ game_id: gameId, ...pair}));        
+            lastId = + await redisHget('lastId', 0);    
+            if(lastId + pairCount >= memeInDb) {
+                    lastId = 0;
+                    await redis.hset(`game:${gameId}:1`, { lastId: lastId });
+            }
+        }, waitNextPairTimer);
+    };
+
     return {
-        init: init,
+        gameloop: gameloop,
         getCurrentPair: getCurrentPair,
         getPairWinner: getPairWinner,
         addMemeLikes: addMemeLikes,

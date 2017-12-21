@@ -33,8 +33,8 @@ const createGame = async function (_data) {
     const id = await pgdb.games.add(1, 1).then(answer => (answer[0].id));
     /* TODO: Change last arg for redis name */
     await redis.hmset(`game:${id}:${data.mode}`, gameInitState({mode: data.mode}));
-    rules(data.mode, id).init();
     redis.publish(`action:${types.CREATE_GAME}`, JSON.stringify(id));
+    await rules(data.mode, id).gameloop();
 };
 
 const connectToGame = (socket, _data) => {
@@ -42,34 +42,30 @@ const connectToGame = (socket, _data) => {
     const data = initData(_data, ['user_id', 'game_id']);
     redis.hgetall(`game:${data.game_id}`).then(game => {
         socket.join(`game:${data.game_id}`);
-        redis.publish('action:CONNECT_TO_GAME', JSON.stringify({...data, socketId: socket.id}));
+        redis.publish(`action:${types.CONNECT_TO_GAME}`, JSON.stringify({...data, socketId: socket.id}));
     });
 };
 
 const leaveFromGame = (socket, _data) => {
+    console.log('LEAVE_FROM_GAME ', _data);
     const data = initData(_data, ['user_id', 'game_id']);
     socket.leave(`game:${data.game_id}`);
-    redis.publish('action:LEAVE_FROM_GAME', _data);
+    redis.publish(`action:${types.LEAVE_FROM_GAME}`, _data);
 };
 
 const chooseMem = async function (_data) {
     let data = initData(_data, ['user_id', 'right', 'mem_id', 'game_id']);
     const mode = await redis.hget(`game:${data.game_id}:1`, 'mode').then(data => (data));    
-    await rules(mode, data.game_id).addMemeLikes(data.right);
-    redis.publish('action:CHOOSE_MEM', _data);
+    await rules(mode, data.game_id).addMemeLikes(data.right, data.user_id);
+    // TODO: fix possible extra charge for 1 user
+    redis.publish(`action:${types.CHOOSE_MEM}`, JSON.stringify({...data, _data}));
 };
 
 const getMemPair = async function (_data) {
     const data = initData(_data, ['user_id', 'game_id']);
     const mode = await redis.hget(`game:${data.game_id}:1`, 'mode').then(data => (data));
     const pair = await rules(mode, data.game_id).getCurrentPair();
-    redis.publish('action:GET_MEM_PAIR', JSON.stringify({...data, ...pair}));
-};
-
-const pairWinner = async function (_data) {
-    const data = initData(_data, ['user_id', 'game_id']);
-    const mode = await redis.hget(`game:${data.game_id}:1`, 'mode').then(data => (data));
-    await rules(mode, data.game_id).getPairWinner();
+    redis.publish(`action:${types.GET_MEM_PAIR}`, JSON.stringify({...data, ...pair}));
 };
 
 const disconnected = () => {
@@ -83,7 +79,6 @@ const onConnect = socket => {
     socket.on(types.LEAVE_FROM_GAME, leaveFromGame.bind(undefined, socket));
     socket.on(types.CHOOSE_MEM, chooseMem);
     socket.on(types.GET_MEM_PAIR, getMemPair);
-    socket.on(types.PAIR_WINNER, pairWinner);
     socket.on('disconnect', disconnected);
 };
 
