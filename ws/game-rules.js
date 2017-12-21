@@ -66,6 +66,7 @@ const unlimitedBattle = (gameId) => {
         } else {
             winner = 1;
         }
+        // TODO: Clear REDIS!
         return { rightLikes: rightLikes,
                 leftLikes: leftLikes,
                 winner: winner, };
@@ -142,19 +143,21 @@ const unlimitedBattle = (gameId) => {
         }
 
         const memeInDb = await pgdb.memeStorage.count().then(data => (data));
+        console.log("Meme in DB: ", memeInDb);        
         await init();
         let lastId = + await redisHget('lastId', 0);
         let pair = await getCurrentPair();
 
-        sendWinner(gameId);
+        //sendWinner(gameId);
         setInterval(async function() {
             await sendWinner(gameId);
             await setNewPair();
             pair = await getCurrentPair();
             await redis.publish(`action:${types.NEW_PAIR}`, JSON.stringify({ game_id: gameId, ...pair}));        
             lastId = + await redisHget('lastId', 0);    
-            if(lastId + pairCount >= memeInDb) {
+            if(lastId + pairCount >= memeInDb.count) {
                     lastId = 0;
+                    console.log("Memes in db is finished");
                     await redis.hset(`game:${gameId}:1`, { lastId: lastId });
             }
         }, waitNextPairTimer);
