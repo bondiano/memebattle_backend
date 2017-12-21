@@ -78,23 +78,28 @@ const actionsHandler = (socket, _data) => {
     
     switch(data.type) {
         case `@@ws/${types.CONNECT_TO_GAME}`:
-            connectToGame(_data).bind(undefined, socket);
-            return;
+        console.log('CONNECT_TO_GAME', _data);
+        const data = initData(_data, ['user_id', 'game_id']);
+        redis.hgetall(`game:${data.game_id}`).then(game => {
+            socket.join(`game:${data.game_id}`);
+            redis.publish(`action:${types.CONNECT_TO_GAME}`, JSON.stringify({...data, socketId: socket.id}));
+        });
+            break;
         case `@@ws/${types.LEAVE_FROM_GAME}`:
-            leaveFromGame(_data).bind(undefined, socket);
-            return;
+            leaveFromGame(undefined, _data);
+            break;
         case `@@ws/${types.CHOOSE_MEM}`:
             chooseMem(_data);
-            return;
+            break;
         case `@@ws/${types.GET_MEM_PAIR}`:
             getMemPair(_data);
-            return;
+            break;
     }
 };
 
 const onConnect = socket => {
     console.log('Socket ID:', socket.id);
-    socket.on('action', actionsHandler.bind(socket));
+    socket.on('action', actionsHandler.bind(undefined, socket));
     socket.on(types.CREATE_GAME, createGame);
     socket.on(types.CONNECT_TO_GAME, connectToGame.bind(undefined, socket));
     socket.on(types.LEAVE_FROM_GAME, leaveFromGame.bind(undefined, socket));
