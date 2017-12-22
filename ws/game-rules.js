@@ -86,8 +86,8 @@ const unlimitedBattle = (gameId) => {
         const leftMemeImg = await redisHget(leftMemeId, 1);
         const rightMemeImg = await redisHget(rightMemeId, 2);
 
-        // TODO: CLEAR REDIS!
-        await redis.hdel(`game:${gameId}:1`, leftMemeId - 2, [rightMemeId - 2]);
+        // CLEAR REDIS!
+        await redis.hdel(`game:${gameId}:1`, [leftMemeId - 2, rightMemeId - 2]);
         
         redis.hmset(`game:${gameId}:1`, {
             leftMemeId: leftMemeId,
@@ -137,8 +137,7 @@ const unlimitedBattle = (gameId) => {
         }, waitVoiterDelay);
     };
 
-    const sendFirstPair = async function() {
-        const pair = await getCurrentPair();
+    const sendFirstPair = async function(pair) {
         await redis.publish(`action:${types.NEW_PAIR}`, JSON.stringify({ game_id: gameId, ...pair}));
         await sendWinner(gameId);
     };
@@ -154,21 +153,21 @@ const unlimitedBattle = (gameId) => {
         await init();
         let lastId = + await redisHget('lastId', 0);
         let pair = await getCurrentPair();
-
-        await sendFirstPair();
+        await sendFirstPair(pair);
         setInterval(async function() {
-            await setNewPair();
+            await setNewPair(memeInDb);
             pair = await getCurrentPair();
             await redis.publish(`action:${types.NEW_PAIR}`, JSON.stringify({ game_id: gameId, ...pair}));        
             lastId = + await redisHget('lastId', 0);    
             if(lastId + pairCount >= memeInDb.count) {
                 lastId = 0;
-                console.log("Memes in db is finished");
+                await console.log("Memes in db is finished");
+                await init();
                 const leftMemeImg = await redisHget(1, 1);
                 const rightMemeImg = await redisHget(2, 2);
                 await redis.hmset(`game:${gameId}:1`, { lastId: lastId, 
                     leftMemeId: 1,
-                    leftMemeId: 2,
+                    rightMemeId: 2,
                     leftMemeImg: leftMemeImg,
                     rightMemeImg: rightMemeImg, });
             }
