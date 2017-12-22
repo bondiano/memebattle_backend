@@ -41,8 +41,8 @@ const connectToGame = (socket, _data) => {
     console.log('CONNECT_TO_GAME', _data);
     const data = initData(_data, ['user_id', 'game_id']);
     redis.hgetall(`game:${data.game_id}`).then(game => {
-        socket.join(`game:${data.game_id}`);
-        redis.publish(`action:${types.CONNECT_TO_GAME_CLIENT}`, JSON.stringify({...data, socketId: socket.id}));
+        socket.join(`game:${data.game_id}`).join(`game:${data.game_id}:${data.user_id}`);
+        redis.publish(`action:${types.CONNECT_TO_GAME_REQUEST}`, JSON.stringify({...data, socketId: socket.id}));
     });
 };
 
@@ -58,14 +58,14 @@ const chooseMem = async function (_data) {
     const mode = await redis.hget(`game:${data.game_id}:1`, 'mode').then(data => (data));    
     await rules(mode, data.game_id).addMemeLikes(data.right, data.user_id);
     // TODO: fix possible extra charge for 1 user
-    await redis.publish(`action:${types.CHOOSE_MEM}`, JSON.stringify({...data, _data}));
+    await redis.publish(`action:${types.CHOOSE_MEM_REQUEST}`, JSON.stringify({...data, _data}));
 };
 
 const getMemPair = async function (_data) {
     const data = initData(_data, ['user_id', 'game_id']);
     const mode = await redis.hget(`game:${data.game_id}:1`, 'mode').then(data => (data));
     const pair = await rules(mode, data.game_id).getCurrentPair();
-    await redis.publish(`action:${types.GET_MEM_PAIR}`, JSON.stringify({...data, ...pair}));
+    await redis.publish(`action:${types.GET_MEM_PAIR_REQUEST}`, JSON.stringify({...data, ...pair}));
 };
 
 const disconnected = () => {
@@ -75,16 +75,16 @@ const disconnected = () => {
 const actionsHandler = (socket, _data) => {
     let data = initData(_data, ['type']);
     switch(data.type) {
-        case `@@ws/${types.CONNECT_TO_GAME_CLIENT}`:
+        case `@@ws/${types.CONNECT_TO_GAME_REQUEST}`:
             connectToGame(socket, _data);
             break;
         case `@@ws/${types.LEAVE_FROM_GAME}`:
             leaveFromGame(undefined, _data);
             break;
-        case `@@ws/${types.CHOOSE_MEM}`:
+        case `@@ws/${types.CHOOSE_MEM_REQUEST}`:
             chooseMem(_data);
             break;
-        case `@@ws/${types.GET_MEM_PAIR}`:
+        case `@@ws/${types.GET_MEM_PAIR_REQUEST}`:
             getMemPair(_data);
             break;
     }

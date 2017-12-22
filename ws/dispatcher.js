@@ -14,9 +14,9 @@ const dispatcher = (io) => {
                 console.log('create dispatcher');
                 io.emit(types.CREATE_GAME, msg);
                 return;
-            case types.CONNECT_TO_GAME_CLIENT:
+            case types.CONNECT_TO_GAME_REQUEST:
                 console.log('connect dispatcher');
-                io.to(`game:${data.game_id}`).emit('action', {type: `@@ws/${types.CONNECT_TO_GAME_SERVER}`, data});
+                io.to(`game:${data.game_id}:${data.user_id}`).emit('action', {type: `@@ws/${types.CONNECT_TO_GAME_SUCCESS}`, data});
                 return;
             case types.LEAVE_FROM_GAME:
                 console.log('leave dispatcher');
@@ -26,13 +26,13 @@ const dispatcher = (io) => {
                 console.log('start dispatcher');
                 io.to(`game:${data.game_id}`).emit('action', {type: types.START_GAME, data});                
                 return;
-            case types.CHOOSE_MEM:
+            case types.CHOOSE_MEM_REQUEST:
                 console.log('choose dispatcher');
-                io.to(`game:${data.game_id}`).emit('action', {type: `@@ws/${types.CHOOSE_MEM}`, data});                
+                io.to(`game:${data.game_id}:${data.user_id}`).emit('action', {type: `@@ws/${types.CHOOSE_MEM_SUCCESS}`, data});                
                 return;
-            case types.GET_MEM_PAIR:
+            case types.GET_MEM_PAIR_REQUEST:
                 console.log('get mem pair dispatcher');
-                io.to(`game:${data.game_id}`).emit('action', {type:`@@ws/${types.GET_MEM_PAIR}`, data});                
+                io.to(`game:${data.game_id}:${data.user_id}`).emit('action', {type:`@@ws/${types.GET_MEM_PAIR_SUCCESS}`, data});                
                 return;
             case types.NEW_PAIR:
                 console.log('new mem pair dispatcher');
