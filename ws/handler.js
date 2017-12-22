@@ -42,7 +42,7 @@ const connectToGame = (socket, _data) => {
     const data = initData(_data, ['user_id', 'game_id']);
     redis.hgetall(`game:${data.game_id}`).then(game => {
         socket.join(`game:${data.game_id}`);
-        redis.publish(`action:${types.CONNECT_TO_GAME}`, JSON.stringify({...data, socketId: socket.id}));
+        redis.publish(`action:${types.CONNECT_TO_GAME_CLIENT}`, JSON.stringify({...data, socketId: socket.id}));
     });
 };
 
@@ -74,16 +74,9 @@ const disconnected = () => {
 
 const actionsHandler = (socket, _data) => {
     let data = initData(_data, ['type']);
-    console.log(data);
-    
     switch(data.type) {
-        case `@@ws/${types.CONNECT_TO_GAME}`:
-        console.log('CONNECT_TO_GAME', _data);
-        const data = initData(_data, ['user_id', 'game_id']);
-        redis.hgetall(`game:${data.game_id}`).then(game => {
-            socket.join(`game:${data.game_id}`);
-            redis.publish(`action:${types.CONNECT_TO_GAME}`, JSON.stringify({...data, socketId: socket.id}));
-        });
+        case `@@ws/${types.CONNECT_TO_GAME_CLIENT}`:
+            connectToGame(socket, _data);
             break;
         case `@@ws/${types.LEAVE_FROM_GAME}`:
             leaveFromGame(undefined, _data);

@@ -12,11 +12,11 @@ const dispatcher = (io) => {
         switch (parseAction(action)){
             case types.CREATE_GAME:
                 console.log('create dispatcher');
-                io.emit(types.CREATE_GAME, data);
+                io.emit(types.CREATE_GAME, msg);
                 return;
-            case types.CONNECT_TO_GAME:
+            case types.CONNECT_TO_GAME_CLIENT:
                 console.log('connect dispatcher');
-                io.to(`game:${data.game_id}`).emit('action', {type: `@@ws/${types.CONNECT_TO_GAME}`, data});
+                io.to(`game:${data.game_id}`).emit('action', {type: `@@ws/${types.CONNECT_TO_GAME_SERVER}`, data});
                 return;
             case types.LEAVE_FROM_GAME:
                 console.log('leave dispatcher');
