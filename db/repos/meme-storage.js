@@ -19,11 +19,11 @@ class MemeStorageRepository {
     }
 
     get(from, count) {
-        return this.db.any('SELECT index as id, image_src FROM membattle WHERE index > $1 LIMIT $2', [from, count]); // TODO: change storage
+        return this.db.any('SELECT id, image_src FROM meme_storage WHERE id > $1 LIMIT $2', [from, count]); // TODO: change storage
     }
 
     count() {
-        return this.db.one('SELECT count(*) FROM membattle');
+        return this.db.one('SELECT count(*) FROM meme_storage');
     }
 }
 
