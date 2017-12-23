@@ -49,12 +49,12 @@ const connectToGame = (socket, _data) => {
 const leaveFromGame = (socket, _data) => {
     console.log('LEAVE_FROM_GAME ', _data);
     const data = initData(_data, ['user_id', 'game_id']);
-    socket.leave(`game:${data.game_id}`);
+    socket.leave(`game:${data.game_id}:${data.user_id}`).leave(`game:${data.game_id}`);
     redis.publish(`action:${types.LEAVE_FROM_GAME}`, JSON.stringify({_data}));
 };
 
 const chooseMem = async function (_data) {
-    let data = await initData(_data, ['user_id', 'right', 'mem_id', 'game_id']);
+    let data = await initData(_data, ['user_id', 'right', 'game_id']);
     const mode = await redis.hget(`game:${data.game_id}:1`, 'mode').then(data => (data));    
     await rules(mode, data.game_id).addMemeLikes(data.right, data.user_id);
     // TODO: fix possible extra charge for 1 user

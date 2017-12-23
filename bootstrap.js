@@ -17,7 +17,7 @@ const bodyParser = require('body-parser');
 /* Middleware init section */
 const app = express();
 const server = require('http').createServer(app);
-const io = require('socket.io')(server, {path: '/socket.io', transports: ['websockets'], secure: true});
+const io = require('socket.io')(server, {path: '/socket.io', transports: ['websockets', 'polling'], secure: true});
 const logger = morgan('combined');
 const redis = require('./redis')();
 

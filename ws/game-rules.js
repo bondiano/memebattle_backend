@@ -155,10 +155,6 @@ const unlimitedBattle = (gameId) => {
         let pair = await getCurrentPair();
         await sendFirstPair(pair);
         setInterval(async function() {
-            await setNewPair(memeInDb);
-            pair = await getCurrentPair();
-            await redis.publish(`action:${types.NEW_PAIR}`, JSON.stringify({ game_id: gameId, ...pair}));        
-            lastId = + await redisHget('lastId', 0);    
             if(lastId + pairCount >= memeInDb.count) {
                 lastId = 0;
                 await console.log("Memes in db is finished");
@@ -171,6 +167,10 @@ const unlimitedBattle = (gameId) => {
                     leftMemeImg: leftMemeImg,
                     rightMemeImg: rightMemeImg, });
             }
+            await setNewPair(memeInDb);
+            pair = await getCurrentPair();
+            await redis.publish(`action:${types.NEW_PAIR}`, JSON.stringify({ game_id: gameId, ...pair}));        
+            lastId = + await redisHget('lastId', 0);    
             await sendWinner(gameId);
         }, waitNextPairTimer);
     };
