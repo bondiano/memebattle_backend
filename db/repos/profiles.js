@@ -20,8 +20,11 @@ class ProfilesRepository {
     
     // Add coin to profile with id
     addCoin(id, count) {
-        //console.log(id);        
         return this.db.query('UPDATE profiles SET coins_count = coins_count + $1 WHERE user_id = $2', [count, id]);
+    }
+
+    getCoinsCount(id) {
+        return this.db.one('SELECT coins_count FROM profiles WHERE user_id = $1', id);
     }
 }
 

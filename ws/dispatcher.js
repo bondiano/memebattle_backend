@@ -18,9 +18,9 @@ const dispatcher = (io) => {
                 console.log('connect dispatcher');
                 io.to(`game:${data.game_id}:${data.user_id}`).emit('action', {type: `@@ws/${types.CONNECT_TO_GAME_SUCCESS}`, data});
                 return;
-            case types.LEAVE_FROM_GAME:
+            case types.LEAVE_FROM_GAME_REQUEST:
                 console.log('leave dispatcher');
-                io.to(`game:${data.game_id}`).emit('action', {type: `@@ws/${types.LEAVE_FROM_GAME}`, data});
+                io.to(`game:${data.game_id}:${data.user_id}`).emit('action', {type: `@@ws/${types.LEAVE_FROM_GAME_SUCCESS}`, data});
                 return;
             case types.START_GAME:
                 console.log('start dispatcher');

@@ -46,11 +46,11 @@ const connectToGame = (socket, _data) => {
     });
 };
 
-const leaveFromGame = (socket, _data) => {
-    console.log('LEAVE_FROM_GAME ', _data);
-    const data = initData(_data, ['user_id', 'game_id']);
-    socket.leave(`game:${data.game_id}:${data.user_id}`).leave(`game:${data.game_id}`);
-    redis.publish(`action:${types.LEAVE_FROM_GAME}`, JSON.stringify({_data}));
+const leaveFromGame = async function (socket, _data) {
+    await console.log('LEAVE_FROM_GAME_REQUEST ', _data);
+    const data = await initData(_data, ['user_id', 'game_id']);
+    await redis.publish(`action:${types.LEAVE_FROM_GAME_REQUEST}`, JSON.stringify({...data, _data}));
+    await socket.leave(`game:${data.game_id}:${data.user_id}`).leave(`game:${data.game_id}`);
 };
 
 const chooseMem = async function (_data) {
@@ -78,8 +78,8 @@ const actionsHandler = (socket, _data) => {
         case `@@ws/${types.CONNECT_TO_GAME_REQUEST}`:
             connectToGame(socket, _data);
             break;
-        case `@@ws/${types.LEAVE_FROM_GAME}`:
-            leaveFromGame(undefined, _data);
+        case `@@ws/${types.LEAVE_FROM_GAME_REQUEST}`:
+            leaveFromGame(socket, _data);
             break;
         case `@@ws/${types.CHOOSE_MEM_REQUEST}`:
             chooseMem(_data);
