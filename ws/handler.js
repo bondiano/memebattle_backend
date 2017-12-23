@@ -93,11 +93,6 @@ const actionsHandler = (socket, _data) => {
 const onConnect = socket => {
     console.log('Socket ID:', socket.id);
     socket.on('action', actionsHandler.bind(undefined, socket));
-    socket.on(types.CREATE_GAME, createGame);
-    socket.on(types.CONNECT_TO_GAME, connectToGame.bind(undefined, socket));
-    socket.on(types.LEAVE_FROM_GAME, leaveFromGame.bind(undefined, socket));
-    socket.on(types.CHOOSE_MEM, chooseMem);
-    socket.on(types.GET_MEM_PAIR, getMemPair);
     socket.on('disconnect', disconnected);
 };
 

@@ -31,7 +31,8 @@ const unlimitedBattle = (gameId) => {
     const init = async function() {
         let lastId = + await redisHget('lastId', 0);
 
-        let memeStorage = await pgdb.memeStorage.get(lastId, pairCount).then(data => (data)); // TODO: FIX TO dynamic
+        let memeStorage = await pgdb.memeStorage.get(lastId, pairCount)
+        .then(data => (data)).catch(err => clonsole.log(err)); // TODO: FIX TO dynamic
         await memeStorage.forEach(el => {
             redis.hmset(`game:${gameId}:1`, { [el.id]: el.image_src });
         });
@@ -102,15 +103,20 @@ const unlimitedBattle = (gameId) => {
     };
 
     const addMemeLikes = async function(right, userId) { // 0 - left, 1 - right
+        const voitedRight = await redisHget('voitedRight', 0);
+        const voitedLeft = await redisHget('voitedLeft', 0);
+        if(voitedRight.split(':').indexOf(userId) !== -1 || voitedLeft.split(':').indexOf(userId) !== -1) {
+            return;
+        }
         if (right) { // TODO: normal check by mem id
             await redis.hmset(`game:${gameId}:1`, { 
                 rightLikes: + await redisHget('rightLikes', 0) + 1,
-                voitedRight: await redisHget('voitedRight', 0) + `:${userId}`,
+                voitedRight: voitedRight + `:${userId}`,
             });
         } else {
             await redis.hmset(`game:${gameId}:1`, { 
                 leftLikes: + await redisHget('leftLikes', 0) + 1,
-                voitedLeft: await redisHget('voitedLeft', 0) + `:${userId}`,
+                voitedLeft: voitedRight + `:${userId}`,
             });
         }
     };
@@ -124,7 +130,7 @@ const unlimitedBattle = (gameId) => {
         }
         await usersId.split(':').forEach((el) => {
             if(el) {
-                pgdb.profiles.addCoin(el, 1);
+                pgdb.profiles.addCoin(el, 1).catch(err => console.log(err));
             }
         })
     };
@@ -155,10 +161,10 @@ const unlimitedBattle = (gameId) => {
         let pair = await getCurrentPair();
         await sendFirstPair(pair);
         setInterval(async function() {
+            await setNewPair(memeInDb);
             if(lastId + pairCount >= memeInDb.count) {
                 lastId = 0;
                 await console.log("Memes in db is finished");
-                await init();
                 const leftMemeImg = await redisHget(1, 1);
                 const rightMemeImg = await redisHget(2, 2);
                 await redis.hmset(`game:${gameId}:1`, { lastId: lastId, 
@@ -166,8 +172,8 @@ const unlimitedBattle = (gameId) => {
                     rightMemeId: 2,
                     leftMemeImg: leftMemeImg,
                     rightMemeImg: rightMemeImg, });
+                await init();
             }
-            await setNewPair(memeInDb);
             pair = await getCurrentPair();
             await redis.publish(`action:${types.NEW_PAIR}`, JSON.stringify({ game_id: gameId, ...pair}));        
             lastId = + await redisHget('lastId', 0);    
