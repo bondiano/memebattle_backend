@@ -129,8 +129,12 @@ const unlimitedBattle = (gameId) => {
             usersId = await redisHget('voitedRight', 0);
         }
         await usersId.split(':').forEach((el) => {
-            if(el) {
-                pgdb.profiles.addCoin(el, 1).catch(err => console.log(err));
+            if(el && el !== '0') {
+                pgdb.profiles.addCoin(el, 1).then(() => {
+                    pgdb.profiles.getCoinsCount(el).then(data => {
+                        redis.publish(`action:${types.ADD_COIN}`, JSON.stringify({ game_id: gameId, user_id: el, coins: data.coins_count}));
+                    }).catch(err => console.log(err));
+                }).catch(err => console.log(err))
             }
         })
     };
@@ -138,7 +142,7 @@ const unlimitedBattle = (gameId) => {
     const sendWinner = async function() {
         setTimeout(async function() {
             const winData = await getPairWinner();
-            addMemcoins(winData.winner);
+            await addMemcoins(winData.winner);
             await redis.publish(`action:${types.PAIR_WINNER}`, JSON.stringify({ game_id: gameId, ...winData}));            
         }, waitVoiterDelay);
     };

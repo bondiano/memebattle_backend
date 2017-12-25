@@ -11,4 +11,5 @@ module.exports = {
     GET_MEM_PAIR_SUCCESS: 'GET_MEM_PAIR_SUCCESS',
     NEW_PAIR: 'NEW_PAIR',
     PAIR_WINNER: 'PAIR_WINNER',
+    ADD_COIN: 'ADD_COIN',
 };

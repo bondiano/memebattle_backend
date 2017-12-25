@@ -42,6 +42,9 @@ const dispatcher = (io) => {
                 console.log('pair winner dispatcher');
                 io.to(`game:${data.game_id}`).emit('action', {type: `@@ws/${types.PAIR_WINNER}`, data});                
                 return;
+            case types.ADD_COIN:
+                io.to(`game:${data.game_id}:${data.user_id}`).emit('action', {type: `@@ws/${types.ADD_COIN}`, data});                
+                return;
         }
     });
 };

@@ -24,7 +24,7 @@ class ProfilesRepository {
     }
 
     getCoinsCount(id) {
-        return this.db.one('SELECT coins_count FROM profiles WHERE user_id = $1', id);
+        return this.db.oneOrNone('SELECT coins_count FROM profiles WHERE user_id = $1', id);
     }
 }
 
