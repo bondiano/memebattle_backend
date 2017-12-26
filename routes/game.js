@@ -54,6 +54,7 @@ module.exports = (app, db) => {
         .catch(error => {
             res.status(400).json({
                 success: false,
+                name: 'GETRAITERR',
                 message: "Cannot get rating",
                 error: error.message || error,
             });

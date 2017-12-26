@@ -39,6 +39,7 @@ module.exports = (app, db) => {
                 message: 'Please enter username and password.', });
             return;
         }
+
         const username = req.body.username;
         const password = req.body.password;
         db.users.isValidUserPassword(username, password).then(isValid => {
@@ -177,7 +178,7 @@ module.exports = (app, db) => {
             switch(error.constraint){
                 case 'users_username_key':
                     message = 'User with this username already exists';
-                    namr = 'EXTUSR';
+                    name = 'EXTUSR';
                     break;
                 case 'users_email_key':
                     message = 'User with this email already exists';
