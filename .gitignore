@@ -5,3 +5,4 @@ db/errors.log
 .idea
 package-lock.json
 *.code-workspace
+*.rdb
