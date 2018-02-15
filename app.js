@@ -13,8 +13,8 @@ const bodyParser = require('body-parser');
 /* Middleware init section */
 const app = require('express')();
 const server = require('http').createServer(app);
-const io = require('socket.io')(server, {path: '/socket.io', transports: ['websockets', 'polling'], secure: true});
 const redisSocketIoAdapter = require('socket.io-redis');
+const io = require('socket.io')(server);
 
 
 /* Middleware use section */
@@ -24,8 +24,8 @@ io.adapter(redisSocketIoAdapter({host: REDIS_HOST, port: REDIS_PORT}));
 
 /* Set up app routes */
 require('./routes')(app, pgdb);
-require('./ws')(io);
+require('./ws/ws-controller')(io);
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`App listening on port ${port}!`);
 });
