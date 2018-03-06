@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const jwt_check = require('express-jwt');
-const v4 = require('node-uuid').v4;
+const v4 = require('uuid/v4');
 require('dotenv').config({path: '../config/.env'});
 
 /**

@@ -7,6 +7,7 @@ module.exports = (app, db) => {
     game(app, db);
 
     app.get('/', (req, res) => {
+        // language=HTML
         res.send(`<!DOCTYPE html>
         <html lang="en">
         <head>
@@ -16,10 +17,15 @@ module.exports = (app, db) => {
         <body>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
         <script>
-            const socket = io();
-            socket.on('connect', () => console.log('success'));         
-            socket.on('action', data => console.log('action', data));                
+            const socket = io.connect('http://localhost:3080');
+            console.log('START');
+            socket.on('connection', () => console.log('success'));
+            socket.on('action', data => console.log('action', data));
             socket.on('error', e => console.log('Error: ' + (e ? e : 'unknown error')));
+            socket.on('news', function (data) {
+                console.log(data);
+                socket.emit('my other event', {my: 'data'});
+            });
         </script>
 
         </body>
