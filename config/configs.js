@@ -1,12 +1,14 @@
 // PostgreSQL configs
-const PG_HOST = process.env.PG_HOST;
-const PG_DB = process.env.PG_DB;
-const PG_USER = process.env.PG_USER;
-const PG_PASSWORD = process.env.PG_PASSWORD;
+const DB_HOST = process.env.DB_HOST;
+const DB_PORT = process.env.DB_PORT;
+const DB_NAME = process.env.DB_NAME;
+const DB_USER = process.env.DB_USER;
+const DB_PASSWORD = process.env.DB_PASSWORD;
 
 module.exports = {
-    PG_HOST,
-    PG_DB,
-    PG_USER,
-    PG_PASSWORD,
+    DB_HOST,
+    DB_PORT,
+    DB_NAME,
+    DB_USER,
+    DB_PASSWORD,
 };
