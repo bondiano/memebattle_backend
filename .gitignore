@@ -6,3 +6,4 @@ db/errors.log
 package-lock.json
 *.code-workspace
 *.rdb
+.DS_STORE

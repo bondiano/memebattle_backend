@@ -1,15 +1,13 @@
-const globalConfig = require('./configs');
-
-const adapter = 'pg';
+const config = require('./configs');
 
 module.exports = {
-    client: adapter,
+    client: 'pg',
     connection: {
-        host: globalConfig.DB_HOST,
-        port: globalConfig.DB_PORT,
-        user: globalConfig.DB_USER,
-        password: globalConfig.DB_PASSWORD,
-        database: globalConfig.DB_NAME,
+        host: config.DB_HOST,
+        port: config.DB_PORT,
+        user: config.DB_USER,
+        password: config.DB_PASSWORD,
+        database: config.DB_NAME,
         charset: 'utf8'
     },
     debug: true,
