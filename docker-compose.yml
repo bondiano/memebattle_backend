@@ -1,29 +1,31 @@
 version: '3'
 
 services:
-  db:
-    image: postgres:10
-    ports:
-      - "5432:5432"
+  nodejs:
+    build: .
+    container_name: meme_nodejs
     volumes:
-      - ./docker/data/postgresql:/var/lib/postgresql/data
-    restart: always
-    enviroment:
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_DB: ${DB_DB}
+      - ./:/var/www/backend
+    ports:
+      - 8080:8080
     networks:
       - app
-  redis:
-    image: redis:3.0-alpine
+    depends_on:
+      - database
+  database:
+    image: postgres:10
+    container_name: meme_database
+    restart: always
     ports:
-      - "6379:6379"
-    netwokrs:
+      - 5432:5432
+    volumes:
+      - ./docker/data/postgresql:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    networks:
       - app
-
-volumes:
-  data:
-    driver: local
 
 networks:
   app:

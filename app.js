@@ -1,8 +1,10 @@
 require('dotenv').config({path: './.env'});
-const { HTTP_PORT } = process.env;
+
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const Router = require('./routes');
+const Router = require('./app/routes');
+
+const { HTTP_PORT } = process.env;
 
 /* Middleware init section */
 const app = require('express')();
