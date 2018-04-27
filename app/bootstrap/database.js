@@ -20,6 +20,6 @@ const sequelize = new Sequelize(
 
 sequelize
     .authenticate()
-    .then(() => console.log('Connection with database has been established successfully.'));
+    .then(() => console.log('Connection with database has been established successfully.')); //eslint-disable-line
 
 module.exports = sequelize;
