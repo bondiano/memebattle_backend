@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon --inspect app.js -host 0.0.0.0",
     "start": "node app.js",
-    "migrate": "node app/migrations"
+    "migrate": "node app/migrations",
+    "lint": "eslint ."
   },
   "dependencies": {
     "body-parser": "^1.18.2",
