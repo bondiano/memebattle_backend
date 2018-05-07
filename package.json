@@ -4,10 +4,10 @@
   "description": "Backend for membattle project",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon --inspect app.js -host 0.0.0.0",
-    "start": "node app.js",
-    "migrate": "node app/migrations",
-    "lint": "eslint ."
+    "dev": "nodemon --inspect ./app/bin/server.js -host 0.0.0.0",
+    "start": "node ./app/bin/server.js",
+    "migrate": "node ./app/migrations",
+    "lint": "eslint ./app"
   },
   "dependencies": {
     "body-parser": "^1.18.2",

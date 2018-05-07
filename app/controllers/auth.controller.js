@@ -5,5 +5,13 @@ module.exports = {
         const {provider} = res.params;
 
         return res.redirect(`${CAS_URL}/auth/${provider}?partner_id=${PARTNER_ID}`);
+    },
+
+    registration: (req, res) => {
+        return res.success();        
+    },
+
+    login: (req, res) => {
+        return res.success();
     }
 };
