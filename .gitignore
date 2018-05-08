@@ -1,10 +1,14 @@
+# Ignore IDE files
 /.idea
 /*.code-workspace
 /*.rdb
 /.DS_STORE
 
+# Ignore package manager errors
 /yarn-error.log
 /npm-error.log
 
 /node_modules
 /.env
+
+/docker/data
