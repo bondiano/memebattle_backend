@@ -4,12 +4,14 @@
   "description": "Backend for membattle project",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon --inspect ./app/bin/server.js -host 0.0.0.0",
-    "start": "node ./app/bin/server.js",
+    "dev": "pm2 startOrRestart ecosystem.config.js --env development",
+    "start-stage": "pm2 startOrRestart ecosystem.config.js --env stage",
+    "start-prod": "pm2 startOrRestart ecosystem.config.js --env production",
     "migrate": "node ./app/migrations",
     "lint": "eslint ./app"
   },
   "dependencies": {
+    "basic-auth-connect": "^1.0.0",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
     "dotenv": "^5.0.0",
@@ -29,7 +31,8 @@
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",
-    "eslint": "^4.19.1"
+    "eslint": "^4.19.1",
+    "pm2": "^2.10.3"
   },
   "repository": {
     "type": "git",

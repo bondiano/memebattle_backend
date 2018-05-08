@@ -9,6 +9,11 @@ ADD yarn.lock .
 
 COPY . .
 
-EXPOSE 8080
+RUN yarn --pure-lockfile
+RUN yarn global add pm2
 
-CMD yarn --pure-lockfile && yarn start
+EXPOSE 8080
+EXPOSE 8000
+
+# CMD pm2-runtime ecosystem.config.js && pm2 logs
+CMD pm2-runtime ecosystem.config.js && pm2 logs

@@ -1,10 +1,7 @@
-require('dotenv').config();
-
-const { HTTP_PORT } = require('../config/config');
+const { REST_PORT, HOST } = require('../config/config');
 
 const express = require('express');
 const server = express();
-const { kue } = require('../bootstrap/kue');
 
 /* Middleware init section */
 const cors = require('cors');
@@ -13,7 +10,6 @@ const { customResponses } = require('../middlewares');
 
 /* Middleware use section */
 server.use(cors());
-server.use(kue.app);
 server.use(bodyParser.json());
 server.use(customResponses);
 
@@ -23,6 +19,6 @@ const Router = require('../routes');
 /* Set up server routes */
 server.use('/', Router);
 
-server.listen(HTTP_PORT, () => {
-    console.log(`App listening on port ${HTTP_PORT}!`);
+server.listen(REST_PORT, HOST, () => {
+    console.log(`REST server listening on port ${REST_PORT}!`);
 });

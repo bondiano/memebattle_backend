@@ -7,7 +7,9 @@ services:
     volumes:
       - ./:/var/www/backend
     ports:
-      - 8080:8080
+      - 8000:8000 # SOCKET
+      - 8001:8001 # KUE
+      - 8080:8080 # REST
     networks:
       - app
     depends_on:
