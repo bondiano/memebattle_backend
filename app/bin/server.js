@@ -4,6 +4,7 @@ const { HTTP_PORT } = require('../config/config');
 
 const express = require('express');
 const server = express();
+const { kue } = require('../bootstrap/kue');
 
 /* Middleware init section */
 const cors = require('cors');
@@ -12,6 +13,7 @@ const { customResponses } = require('../middlewares');
 
 /* Middleware use section */
 server.use(cors());
+server.use(kue.app);
 server.use(bodyParser.json());
 server.use(customResponses);
 

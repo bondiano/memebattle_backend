@@ -2,11 +2,11 @@ const Sequelize = require('sequelize');
 const dbConfig = require('../config/database');
 
 const sequelize = new Sequelize(
-    dbConfig.DATABASE_NAME,
-    dbConfig.DATABASE_USER,
-    dbConfig.DATABASE_PASSWORD,
+    dbConfig.name,
+    dbConfig.user,
+    dbConfig.password,
     {
-        host: dbConfig.DATABASE_HOST || '127.0.0.1',
+        host: dbConfig.host || '127.0.0.1',
         dialect: 'postgres',
         operatorsAliases: false,
         pool: {
