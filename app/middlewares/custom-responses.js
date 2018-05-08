@@ -2,16 +2,16 @@ const customResponses = {
     success(payload) {
         return this.status(200).json({
             success: true,
-            payload,
+            payload
         });
     },
 
     unauthorized() {
         return this.status(401).json({
             success: false,
-            error: 'unauthorized',
+            error: 'unauthorized'
         });
-    },
+    }
 };
 
 module.exports = (req, res, next) => {

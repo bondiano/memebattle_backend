@@ -8,7 +8,7 @@ module.exports = {
     },
 
     registration: (req, res) => {
-        return res.success();        
+        return res.success();
     },
 
     login: (req, res) => {
