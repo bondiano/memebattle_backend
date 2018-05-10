@@ -1,5 +1,4 @@
-const { SOCKET_PORT, HOST } = require('../config/config');
-
+const { config: { SOCKET_PORT, HOST } } = require('../config');
 const express = require('express');
 const app = express();
 
@@ -11,13 +10,26 @@ const server = app.listen(SOCKET_PORT, HOST, () => {
     console.log(`Socket server listening on port ${SOCKET_PORT}!`);
 });
 
-const io = require('socket.io')(server);
+const socket = require('../bootstrap/socket');
+socket.connect(server);
 
-io.on('connection', (socket) => {
-    console.log('a user connected');
-    socket.emit('meow', {type: 'action'});
+const { connection } = require('../socket');
+socket.subscribe(connection);
 
-    socket.on('disconnect', () => {
-        console.log('user disconnected');
-    });
+/* Create test route */
+app.get('/', (req, res) => {
+    res.send(`
+    <html>
+        <head>
+        <title>Socket test route</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.dev.js"></script>
+        </head>
+        <body>
+            <h1>Socket test route!</h1>
+            <script>
+            const socket = io('http://localhost:8000');
+            </script>
+        </body>
+    </html>
+    `);
 });
