@@ -1,7 +1,9 @@
 const kue = require('kue-scheduler');
 
-const { redis: { port, host, password, family } } = require('../config');
-const { kue: { db } } = require('../config');
+const {
+    redis: { port, host, password, family },
+    kue: { db }
+} = require('../config');
 
 const redis = {
     port, host, password, family, db
