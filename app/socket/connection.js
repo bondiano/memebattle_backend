@@ -1,18 +1,18 @@
 const {
     disconnect$,
     user$
-} = require('../observables');
+} = require('./observables');
 
 const {
     disconnect,
     user
-} = require('./');
+} = require('./observers');
 
-const observer = (socket) => {
+const connection = (socket) => {
     console.log('Client connected');
 
     user$(socket).subscribe(user);
     disconnect$(socket).subscribe(disconnect);
 };
 
-module.exports = observer;
+module.exports = connection;

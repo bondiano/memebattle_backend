@@ -1,6 +1,6 @@
-const Sequelize = require('../bootstrap/database');
+const sequelize = require('../bootstrap/database');
 
-const User = Sequelize.define('user', {
+const User = sequelize.define('user', {
     // attributes here...
 });
 

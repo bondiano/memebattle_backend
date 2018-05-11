@@ -1,5 +1,5 @@
 const { io } = require('../bootstrap/socket');
-const { connection } = require('./observers');
+const connection = require('./connection');
 
 module.exports = {
     io,
