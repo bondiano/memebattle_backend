@@ -1,5 +1,5 @@
-const user = (data) => {
+const observer = (data) => {
     console.log('User send data:', data);
 };
 
-module.exports = user;
+module.exports = observer;

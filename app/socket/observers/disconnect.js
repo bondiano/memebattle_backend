@@ -1,5 +1,5 @@
-const disconnect = () => {
+const observer = () => {
     console.log('Client disconnected');
 };
 
-module.exports = disconnect;
+module.exports = observer;
