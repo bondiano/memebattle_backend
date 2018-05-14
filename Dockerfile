@@ -15,4 +15,4 @@ RUN yarn global add pm2
 EXPOSE 8080
 EXPOSE 8000
 
-CMD pm2-runtime ecosystem.config.js && pm2 logs
+CMD pm2-runtime ecosystem.config.js --ignore-watch="docker node_modules" && pm2 logs

@@ -1,18 +1,20 @@
-const { tempUser: { CREATE }, ERROR } = require('../types');
+const { tempUser: { CREATE } } = require('../types');
 
-const { tempUser: action } = require('../actions');
+const { tempUser: handler } = require('../handlers');
 
-const observer = ({socket, error, type, ...data}) => {
-    if (error) {
-        socket.emit(ERROR, JSON.stringify({error: {message: error.message}}));
-        return;
+const observer = ({type, ...data}) => {
+    if (data.error) {
+        return handler.errorHandler(data);
     }
-
-    switch(type) {
-    case(CREATE):
-        return action.create(data);
-    default:
-        return action.unknown(data);
+    try {
+        switch(type) {
+        case(CREATE):
+            return handler.createHandler(data);
+        default:
+            return handler.unknownHandler(data);
+        }
+    } catch(err) {
+        handler.errorHandler(err, data.socket);
     }
 };
 

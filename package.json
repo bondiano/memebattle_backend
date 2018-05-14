@@ -2,7 +2,7 @@
   "name": "memebattle_back",
   "version": "1.0.0",
   "description": "Backend for membattle project",
-  "main": "app.js",
+  "main": "./app",
   "scripts": {
     "dev": "pm2 startOrRestart ecosystem.config.js --env development",
     "start-stage": "pm2 startOrRestart ecosystem.config.js --env stage",
