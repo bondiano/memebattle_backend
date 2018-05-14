@@ -50,10 +50,11 @@
     "postgre"
   ],
   "_moduleAliases": {
-    "@root": ".",
-    "@services": "./services",
-    "@models": "./models",
-    "@repo": "./repositories"
+    "@root": "./app",
+    "@services": "./app/services",
+    "@models": "./app/models",
+    "@controllers": "./app/controllers",
+    "@repo": "./app/repositories"
   },
   "author": "membattle",
   "license": "ISC",

@@ -1,6 +1,6 @@
-const { temp_user: { CREATE }, ERROR } = require('../types');
+const { tempUser: { CREATE }, ERROR } = require('../types');
 
-const { temp_user: action } = require('../actions');
+const { tempUser: action } = require('../actions');
 
 const observer = ({socket, error, type, ...data}) => {
     if (error) {
