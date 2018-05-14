@@ -1,16 +1,14 @@
 const {
     disconnect$,
     user$
-} = require('./observables');
+} = require('./listeners');
 
 const {
     disconnect,
     user
-} = require('./observers');
+} = require('./subscribers');
 
 const connection = (socket) => {
-    console.log('Client connected');
-
     user$(socket).subscribe(user);
     disconnect$(socket).subscribe(disconnect);
 };
