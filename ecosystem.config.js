@@ -24,12 +24,12 @@ module.exports = {
             env: { NODE_ENV: 'development', watch: true },
             env_stage: { NODE_ENV: 'stage', watch: false },
             env_production: { NODE_ENV: 'production', watch: false }
-        }
+        },
     ],
     /**
      * Deployment section
      * http://pm2.keymetrics.io/docs/usage/deployment/
      */
     deploy: {
-    }
+    },
 };
