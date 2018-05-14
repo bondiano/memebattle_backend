@@ -5,7 +5,7 @@ const express = require('express');
 const app = express();
 
 const server = app.listen(SOCKET_PORT, HOST, () => {
-    console.log(`Socket server listening on port ${SOCKET_PORT}!`);
+    console.log(`Socket server listening on port ${SOCKET_PORT}!`); //eslint-disable-line
 });
 
 const socket = require('../bootstrap/socket');
