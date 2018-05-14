@@ -13,13 +13,10 @@ const sequelize = new Sequelize(
             max: 5,
             min: 0,
             acquire: 30000,
-            idle: 10000
-        }
+            idle: 10000,
+        },
+        logging: false,
     }
 );
-
-sequelize
-    .authenticate()
-    .then(() => console.log('Connection with database has been established successfully.')); //eslint-disable-line
 
 module.exports = sequelize;

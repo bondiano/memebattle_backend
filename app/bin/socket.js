@@ -1,10 +1,8 @@
+require('module-alias/register');
+
 const { config: { SOCKET_PORT, HOST } } = require('../config');
 const express = require('express');
 const app = express();
-
-const cors = require('cors');
-
-app.use(cors());
 
 const server = app.listen(SOCKET_PORT, HOST, () => {
     console.log(`Socket server listening on port ${SOCKET_PORT}!`);
@@ -37,5 +35,5 @@ app.get('/', (req, res) => {
 module.exports = {
     app,
     server,
-    socket
+    socket,
 };

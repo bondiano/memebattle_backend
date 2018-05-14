@@ -8,6 +8,6 @@ module.exports = {
     NODE_ENV: process.env.NODE_ENV,
     CAS: {
         PARTNER_ID: process.env.PARTNER_ID,
-        CAS_URL: process.env.CAS_URL
-    }
+        CAS_URL: process.env.CAS_URL,
+    },
 };

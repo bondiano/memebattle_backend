@@ -27,5 +27,5 @@ const subscribe = (observer) => {
 module.exports = {
     connect,
     subscribe,
-    io
+    io,
 };

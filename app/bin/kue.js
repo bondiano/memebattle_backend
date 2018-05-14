@@ -13,10 +13,10 @@ if(NODE_ENV !== 'production') {
 }
 
 const server = app.listen(KUE_PORT, HOST, () => {
-    console.log(`KUE server listening on port ${KUE_PORT}!`);
+    console.log(`KUE server listening on port ${KUE_PORT}!`); //eslint-disable-line
 });
 
 module.exports = {
     app,
-    server
+    server,
 };

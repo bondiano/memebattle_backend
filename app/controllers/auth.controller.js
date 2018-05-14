@@ -17,5 +17,5 @@ const login = (req, res) => {
 module.exports = {
     socialNetwork,
     registration,
-    login
+    login,
 };

@@ -8,19 +8,23 @@ const TempUser = sequelize.define('temp_user', {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.UUID,
-        defaultValue: uuid()
+        defaultValue: uuid(),
     },
     token: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+    },
+    socket_id: {
+        allowNull: false,
+        type: Sequelize.STRING,
     },
     coins: {
         allowNull: false,
         type: Sequelize.BIGINT,
-        defaultValue: 0
-    }
+        defaultValue: 0,
+    },
 }, {
-    timestamps: true
+    timestamps: true,
 });
 
 module.exports = TempUser;

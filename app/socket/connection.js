@@ -1,15 +1,15 @@
 const {
     disconnect$,
-    user$
+    tempUser$,
 } = require('./listeners');
 
 const {
     disconnect,
-    user
+    tempUser,
 } = require('./subscribers');
 
 const connection = (socket) => {
-    user$(socket).subscribe(user);
+    tempUser$(socket).subscribe(tempUser);
     disconnect$(socket).subscribe(disconnect);
 };
 

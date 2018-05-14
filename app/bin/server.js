@@ -1,3 +1,5 @@
+require('module-alias/register');
+
 const { REST_PORT, HOST } = require('../config/config');
 
 const express = require('express');
@@ -20,10 +22,10 @@ const Router = require('../routes');
 app.use('/', Router);
 
 const server = app.listen(REST_PORT, HOST, () => {
-    console.log(`REST server listening on port ${REST_PORT}!`);
+    console.log(`REST server listening on port ${REST_PORT}!`); //eslint-disable-line
 });
 
 module.exports = {
     app,
-    server
+    server,
 };

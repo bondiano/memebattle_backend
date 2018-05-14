@@ -7,5 +7,5 @@ module.exports = {
     config,
     database,
     kue,
-    redis
+    redis,
 };

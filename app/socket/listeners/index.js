@@ -1,7 +1,7 @@
 const disconnect$ = require('./disconnect');
-const user$ = require('./user');
+const tempUser$ = require('./temp-user');
 
 module.exports = {
     disconnect$,
-    user$
+    tempUser$,
 };

@@ -3,5 +3,5 @@ const extendWith = require('./extend-with');
 
 module.exports = {
     validator,
-    extendWith
+    extendWith,
 };
