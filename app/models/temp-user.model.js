@@ -7,11 +7,13 @@ const TempUser = sequelize.define('temp_user', {
     id: {
         allowNull: false,
         primaryKey: true,
+        unique: true,
         type: Sequelize.UUID,
         defaultValue: uuid(),
     },
     token: {
         allowNull: false,
+        unique: true,
         type: Sequelize.STRING,
     },
     socket_id: {

@@ -7,6 +7,6 @@ build:
 start:
 	sudo docker-compose up --build
 yarn:
-	sudo docker-compose exec meme_nodejs bash -c "yarn"
+	sudo docker exec meme_nodejs bash -c "yarn"
 migrate:
-	sudo docker-compose exec meme_nodejs bash -c "yarn migrate"
+	sudo docker exec meme_nodejs bash -c "yarn migrate"

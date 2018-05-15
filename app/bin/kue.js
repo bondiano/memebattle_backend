@@ -1,3 +1,5 @@
+require('module-alias/register');
+
 const { KUE_PORT, HOST, NODE_ENV } = require('../config/config');
 const kueConfig = require('../config/kue');
 
