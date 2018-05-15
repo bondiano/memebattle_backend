@@ -10,6 +10,18 @@ const createHandler = async ({data, socket}) => {
         socket.emit(TEMP_USER, res);
     } catch(err) {
         console.error(err); //eslint-disable-line
+        errorHandler({error: err, socket});
+    }
+};
+
+const connectHandler = async ({data, socket}) => {
+    try {
+        const user = await servise.createTempUser(data.identifier, socket.id);
+        const res = {type: tempUser.CREATED, data: {'id': user.id, 'token': user.token}};
+        socket.emit(TEMP_USER, res);
+    } catch(err) {
+        console.error(err); //eslint-disable-line
+        errorHandler({error: err, socket});
     }
 };
 
@@ -29,6 +41,7 @@ const unknownHandler = ({socket}) => {
 
 module.exports = {
     createHandler,
+    connectHandler,
     unknownHandler,
     errorHandler,
 };

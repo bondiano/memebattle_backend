@@ -7,8 +7,9 @@
     "dev": "pm2 startOrRestart ecosystem.config.js --env development",
     "start-stage": "pm2 startOrRestart ecosystem.config.js --env stage",
     "start-prod": "pm2 startOrRestart ecosystem.config.js --env production",
-    "migrate": "node ./app/migrations",
-    "lint": "node_modules/.bin/eslint ./app"
+    "lint": "node_modules/.bin/eslint ./app",
+    "migrate": "node_modules/.bin/sequelize db:migrate",
+    "sequelize": "node_modules/.bin/sequelize"
   },
   "dependencies": {
     "basic-auth-connect": "^1.0.0",
@@ -31,6 +32,7 @@
     "rxjs": "^6.1.0",
     "rxjs-compat": "^6.1.0",
     "sequelize": "^4.37.5",
+    "sequelize-cli": "^4.0.0",
     "socket.io": "^2.1.0",
     "uuid": "^3.2.1"
   },
@@ -53,7 +55,7 @@
   "_moduleAliases": {
     "@root": "./app",
     "@services": "./app/services",
-    "@models": "./app/models",
+    "@models": "./app/database/models",
     "@controllers": "./app/controllers",
     "@repo": "./app/repositories",
     "@jobs": "./app/jobs",
