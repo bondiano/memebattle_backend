@@ -6,7 +6,7 @@ const { tempUser, TEMP_USER, ERROR } = require('../types');
 const createHandler = async ({data, socket}) => {
     try {
         const user = await servise.createTempUser(data.identifier, socket.id);
-        const res = {type: tempUser.CREATED, data: {'user': user.id}};
+        const res = {type: tempUser.CREATED, data: {'id': user.id, 'token': user.token}};
         socket.emit(TEMP_USER, res);
     } catch(err) {
         console.error(err); //eslint-disable-line

@@ -14,7 +14,7 @@ const observer = ({type, ...data}) => {
             return handler.unknownHandler(data);
         }
     } catch(err) {
-        handler.errorHandler(err, data.socket);
+        handler.errorHandler({...data, err});
     }
 };
 

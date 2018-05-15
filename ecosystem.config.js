@@ -20,7 +20,14 @@ module.exports = {
         },
         {
             name: 'QUEUE',
-            script: './app/bin/kue.js',
+            script: './app/bin/kue-server.js',
+            env: { NODE_ENV: 'development', watch: './app' },
+            env_stage: { NODE_ENV: 'stage', watch: false },
+            env_production: { NODE_ENV: 'production', watch: false },
+        },
+        {
+            name: 'QUEUE_WORKER',
+            script: './app/bin/kue-worker.js',
             env: { NODE_ENV: 'development', watch: './app' },
             env_stage: { NODE_ENV: 'stage', watch: false },
             env_production: { NODE_ENV: 'production', watch: false },
