@@ -3,9 +3,9 @@ const { tempUser: servise } = require('@services');
 const { extractValidationType } = require('../utils');
 const { tempUser, TEMP_USER, ERROR } = require('../types');
 
-const createHandler = async ({identifier, socket}) => {
+const createHandler = async ({data, socket}) => {
     try {
-        const user = await servise.createTempUser(identifier, socket.id);
+        const user = await servise.createTempUser(data.identifier, socket.id);
         const res = {type: tempUser.CREATED, data: {'user': user.id}};
         socket.emit(TEMP_USER, res);
     } catch(err) {

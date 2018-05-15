@@ -3,7 +3,9 @@ const Joi = require('joi');
 const { validator } = require('../utils');
 
 const userConnectSchema = {
-    identifier: Joi.string().required(),
+    data: Joi.object({
+        identifier: Joi.string().required(),
+    }),
     type: Joi.string().required(),
 };
 

@@ -4,7 +4,8 @@ const {
     user,
     tempUser,
 } = require('../models');
+
 //eslint-disable-next-line
-user.sync({ force: true }).then(() => console.log('User migration has done.'));
+user.sync({ force: false }).then(() => console.log('User migration has done.'));
 //eslint-disable-next-line
-tempUser.sync({ force: true }).then(() => console.log('TempUser migration has done.'));
+tempUser.sync({ force: false }).then(() => console.log('TempUser migration has done.'));
