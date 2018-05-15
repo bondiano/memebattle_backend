@@ -1,4 +1,4 @@
-const {CAS: {CAS_URL, PARTNER_ID}} = require('../config/config');
+const { config: { CAS: { CAS_URL, PARTNER_ID } } } = require('@config');
 
 const socialNetwork = (req, res) => {
     const {provider} = res.params;

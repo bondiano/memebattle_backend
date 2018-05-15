@@ -1,6 +1,6 @@
 require('module-alias/register');
 
-const { REST_PORT, HOST } = require('../config/config');
+const { config: { REST_PORT, HOST } } = require('@config');
 
 const express = require('express');
 const app = express();

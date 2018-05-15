@@ -3,7 +3,7 @@ const kue = require('kue-scheduler');
 const {
     redis: { port, host, password, family },
     kue: { db },
-} = require('../config');
+} = require('@config');
 
 const redis = {
     port, host, password, family, db,

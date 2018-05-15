@@ -57,6 +57,7 @@
     "@controllers": "./app/controllers",
     "@repo": "./app/repositories",
     "@jobs": "./app/jobs",
+    "@config": "./app/config",
     "@utils": "./app/utils"
   },
   "author": "membattle",

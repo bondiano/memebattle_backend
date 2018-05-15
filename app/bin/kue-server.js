@@ -1,7 +1,7 @@
 require('module-alias/register');
 
 /* Get kue config section */
-const { config: { KUE_PORT, HOST, NODE_ENV }, kue: kueConfig } = require('../config');
+const { config: { KUE_PORT, HOST, NODE_ENV }, kue: kueConfig } = require('@config');
 
 const express = require('express');
 const app = express();
