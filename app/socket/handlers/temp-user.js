@@ -7,13 +7,22 @@ const createHandler = async ({data, socket}) => {
     try {
         const user = await servise.createTempUser(data.identifier, socket.id);
         const res = {type: tempUser.CREATED, data: {'id': user.id, 'token': user.token}};
+
         socket.emit(TEMP_USER, res);
     } catch(err) {
         errorHandler({error: err, socket});
     }
 };
 
-const connectHandler = async () => {
+const connectHandler = async ({data, socket}) => {
+    try {
+        const user = await servise.updateUserSocketId(data.identifier, socket.id);
+        const res = {type: tempUser.CONNECTED, data: {'id': user.id, 'token': user.token}};
+
+        socket.emit(TEMP_USER, res);
+    } catch(err) {
+        errorHandler({error: err, socket});
+    }
 };
 
 const errorHandler = ({error, socket}) => {
@@ -23,6 +32,7 @@ const errorHandler = ({error, socket}) => {
     if(typeFields.length > 0) {
         errorResponse = typeFields;
     }
+
     socket.emit(ERROR, errorResponse);
 };
 

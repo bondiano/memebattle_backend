@@ -1,15 +1,15 @@
 require('module-alias/register');
 
 const { queue: Queue, kue } = require('../bootstrap/kue');
-const { tempUser } = require('@models');
+const { tempUser: tempUserRepo } = require('@repo');
+const { tempUser: tempUserJobs } = require('@jobs');
 
 Queue.on('error', err => {
     console.log( 'Kue worker error: ', err ); //eslint-disable-line
 });
 
 Queue.process('removeTempUserAfterDay', async ({data}, done) => {
-    const user = await tempUser.findById(data.user.id);
-    await user.destroy();
+    await tempUserRepo.destroyById(data.user.id);
     done();
 });
 
@@ -22,6 +22,7 @@ Queue.process('deferRemoveTempUser', ({data}, done) => {
                 }
                 if(job.data.user.id === data.user.id) {
                     job.remove();
+                    tempUserJobs.RemoveTempUserAfterDay(data.user);
                 }
             });
         });
