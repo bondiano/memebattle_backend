@@ -1,11 +1,11 @@
-const { tempUser: servise } = require('@services');
+const { tempUser: tempUserService } = require('@services');
 
 const { extractValidationType } = require('../utils');
 const { tempUser, TEMP_USER, ERROR } = require('../types');
 
 const createHandler = async ({data, socket}) => {
     try {
-        const user = await servise.createTempUser(data.identifier, socket.id);
+        const user = await tempUserService.createTempUser(data.identifier, socket.id);
         const res = {type: tempUser.CREATED, data: {'id': user.id, 'token': user.token}};
 
         socket.emit(TEMP_USER, res);
@@ -16,7 +16,7 @@ const createHandler = async ({data, socket}) => {
 
 const connectHandler = async ({data, socket}) => {
     try {
-        const user = await servise.updateUserSocketId(data.identifier, socket.id);
+        const user = await tempUserService.updateUserSocketId(data.identifier, socket.id);
         const res = {type: tempUser.CONNECTED, data: {'id': user.id, 'token': user.token}};
 
         socket.emit(TEMP_USER, res);

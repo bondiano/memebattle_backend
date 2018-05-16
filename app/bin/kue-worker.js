@@ -8,7 +8,7 @@ Queue.on('error', err => {
     console.log( 'Kue worker error: ', err ); //eslint-disable-line
 });
 
-Queue.process('removeTempUserAfterDay', async ({data}, done) => {
+Queue.process('removeTempUser', async ({data}, done) => {
     await tempUserRepo.destroyById(data.user.id);
     done();
 });
@@ -22,7 +22,7 @@ Queue.process('deferRemoveTempUser', ({data}, done) => {
                 }
                 if(job.data.user.id === data.user.id) {
                     job.remove();
-                    tempUserJobs.RemoveTempUserAfterDay(data.user);
+                    tempUserJobs.RemoveTempUser(data.user);
                 }
             });
         });

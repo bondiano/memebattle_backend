@@ -1,12 +1,12 @@
 const { queue: kueQueue } = require('../bootstrap/kue');
+const { config: { TEMPUSER_EXPIRED } } = require('@config');
 
-const RemoveTempUserAfterDay = (user) => {
+const RemoveTempUser = (user) => {
     const job = kueQueue.create('removeTempUserAfterDay', {user});
-    const oneDay = 1000 * 60 * 60 * 24;
     job
-        .delay(oneDay)
+        .delay(TEMPUSER_EXPIRED)
         .priority('high')
-        .save(err => err && console.log('CREATE removeTempUserAfterDay ERROR', err)); //eslint-disable-line
+        .save(err => err && console.log('CREATE removeTempUser ERROR', err)); //eslint-disable-line
 };
 
 const DeferRemoveTempUser = (user) => {
@@ -17,6 +17,6 @@ const DeferRemoveTempUser = (user) => {
 };
 
 module.exports = {
-    RemoveTempUserAfterDay,
+    RemoveTempUser,
     DeferRemoveTempUser,
 };

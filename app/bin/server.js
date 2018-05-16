@@ -8,10 +8,12 @@ const app = express();
 /* Middleware init section */
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const helmet = require('helmet');
 const { customResponses } = require('../middlewares');
 
 /* Middleware use section */
 app.use(cors());
+app.use(helmet()); // https://helmetjs.github.io/
 app.use(bodyParser.json());
 app.use(customResponses);
 

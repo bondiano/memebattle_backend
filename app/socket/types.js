@@ -1,15 +1,14 @@
-const serverPerfix = '@@ws_serv/';
-const clientPerfix = '@@ws_cli/';
+const { config: { SERVER_WS_PREFIX, CLIENT_WS_PREFIX } } = require('@config');
 
 module.exports = {
     TEMP_USER: 'temp-user',
     ERROR: '_error',
     tempUser: {
-        CREATE: `${clientPerfix}USER_CREATE`,
-        CONNECT: `${clientPerfix}USER_CONNECT`,
+        CREATE: `${CLIENT_WS_PREFIX}USER_CREATE`,
+        CONNECT: `${CLIENT_WS_PREFIX}USER_CONNECT`,
 
-        UNKNOWN: `${serverPerfix}USER_UNKNOWN_TYPE`,
-        CREATED: `${serverPerfix}USER_CREATED`,
-        CONNECTED: `${serverPerfix}USER_CONNECTED`,
+        UNKNOWN: `${SERVER_WS_PREFIX}USER_UNKNOWN_TYPE`,
+        CREATED: `${SERVER_WS_PREFIX}USER_CREATED`,
+        CONNECTED: `${SERVER_WS_PREFIX}USER_CONNECTED`,
     },
 };

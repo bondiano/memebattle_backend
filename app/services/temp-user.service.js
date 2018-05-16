@@ -8,15 +8,15 @@ const createTempUser = async (identifier, socketId) => {
     const cryptedToken = await crypt.hash(identifier, salt);
     const user = await tempUserModel.create({token: cryptedToken, socketId});
 
-    // Create worker for delete temp user after one day
-    tempUserJob.RemoveTempUserAfterDay(user);
+    // Create worker for delete temp user
+    tempUserJob.RemoveTempUser(user);
     return user.save();
 };
 
 const updateUserSocketId = async (identifier, socketId) => {
     const user = await tempUserRepo.getById(identifier);
 
-    // Update worker for delete temp user after one day
+    // Update worker for delete temp user
     tempUserJob.DeferRemoveTempUser(user);
     return user
         .update({ socketId });
