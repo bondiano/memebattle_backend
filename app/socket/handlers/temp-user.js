@@ -1,6 +1,6 @@
 const { tempUser: tempUserService } = require('@services');
 
-const { extractValidationType } = require('../utils');
+const { extractValidationType } = require('@utils');
 const { tempUser, TEMP_USER, ERROR } = require('../types');
 
 const createHandler = async ({data, socket}) => {
