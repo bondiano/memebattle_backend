@@ -1,7 +1,8 @@
 const { tempUser: tempUserService } = require('@services');
 
-const { extractValidationType } = require('@utils');
-const { tempUser, TEMP_USER, ERROR } = require('../types');
+const { errorHandler } = require('./');
+const { handlerRegister } = require('../utils');
+const { tempUser, TEMP_USER } = require('../types');
 
 const createHandler = async ({data, socket}) => {
     try {
@@ -25,24 +26,7 @@ const connectHandler = async ({data, socket}) => {
     }
 };
 
-const errorHandler = ({error, socket}) => {
-    let errorResponse = {};
-    const typeFields = extractValidationType(error.errors || error);
-
-    if(typeFields.length > 0) {
-        errorResponse = typeFields;
-    }
-
-    socket.emit(ERROR, errorResponse);
-};
-
-const unknownHandler = ({socket}) => {
-    socket.emit(TEMP_USER, {type: tempUser.UNKNOWN});
-};
-
-module.exports = {
-    createHandler,
-    connectHandler,
-    unknownHandler,
-    errorHandler,
-};
+module.exports = [
+    handlerRegister(tempUser.CREATE, createHandler),
+    handlerRegister(tempUser.CONNECT, connectHandler),
+];

@@ -1,5 +1,7 @@
-const tempUser = require('./temp-user');
+const errorHandler = require('./error-handler');
+const tempUserHandlers = require('./temp-user');
 
 module.exports = {
-    tempUser,
+    tempUserHandlers,
+    errorHandler,
 };

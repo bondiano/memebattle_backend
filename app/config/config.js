@@ -11,6 +11,6 @@ module.exports = {
         CAS_URL: process.env.CAS_URL,
     },
     TEMPUSER_EXPIRED: 1000 * 60 * 60 * 24, // After one day
-    CLIENT_WS_PREFIX: '@@ws_serv/',
-    SERVER_WS_PREFIX: '@@ws_cli/',
+    CLIENT_WS_PREFIX: '@@ws_cli/',
+    SERVER_WS_PREFIX: '@@ws_serv/',
 };

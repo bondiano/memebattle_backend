@@ -1,6 +1,6 @@
 const Joi = require('joi');
 
-const { validator } = require('../utils');
+const { validatorOperator: validator } = require('../utils');
 
 const userConnectSchema = {
     data: Joi.object({

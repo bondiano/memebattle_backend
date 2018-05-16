@@ -2,7 +2,7 @@ const Joi = require('joi');
 
 const { Observable } = require('rxjs');
 
-const validator = (schema) => (source) =>
+const validatorOperator = (schema) => (source) =>
     Observable.create(subscriber => {
         const subscription = source.subscribe(data => {
             try {
@@ -20,4 +20,4 @@ const validator = (schema) => (source) =>
         return subscription;
     });
 
-module.exports = validator;
+module.exports = validatorOperator;

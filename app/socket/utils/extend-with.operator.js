@@ -4,7 +4,7 @@ const { Observable } = require('rxjs');
  * Add new data to listeners value
  * @param {Object} data
  */
-const extendWith = (data) => (source) =>
+const extendWithOperator = (data) => (source) =>
     Observable.create(subscriber => {
         const subscription = source.subscribe(_data => {
             try {
@@ -18,4 +18,4 @@ const extendWith = (data) => (source) =>
         return subscription;
     });
 
-module.exports = extendWith;
+module.exports = extendWithOperator;

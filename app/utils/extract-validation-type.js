@@ -1,9 +1,6 @@
-const extractValidationType = (errors) => {
-    if (errors.details) {
-        return errors.details // For JOI errors
-            .map(validation => ({path: validation.path, message: validation.message}));
-    }
-    return errors
+const extractValidationType = (_errors) => {
+    const errors = _errors && _errors.details;
+    return errors && errors
         .map(validation => ({path: validation.path, message: validation.message}));
 };
 

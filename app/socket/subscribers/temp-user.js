@@ -1,22 +1,16 @@
-const { tempUser: { CREATE, CONNECT } } = require('../types');
+const { tempUserHandlers: handlers, errorHandler } = require('../handlers');
+const { applyHandlers } = require('../utils');
 
-const { tempUser: handler } = require('../handlers');
+const tempUserHandler = applyHandlers(handlers);
 
 const observer = ({type, ...data}) => {
     if (data.error) {
-        return handler.errorHandler(data);
+        return errorHandler(data);
     }
     try {
-        switch(type) {
-        case(CREATE):
-            return handler.createHandler(data);
-        case(CONNECT):
-            return handler.connectHandler(data);
-        default:
-            return handler.unknownHandler(data);
-        }
+        tempUserHandler[type](data);
     } catch(err) {
-        handler.errorHandler({...data, err});
+        errorHandler({...data, err});
     }
 };
 
