@@ -1,7 +1,5 @@
 FROM node:9
 
-RUN npm install -g yarn
-
 WORKDIR /var/www/backend
 
 ADD package.json .
@@ -9,8 +7,8 @@ ADD yarn.lock .
 
 COPY . .
 
+RUN npm install -g pm2 yarn
 RUN yarn --pure-lockfile --network-timeout 1000000
-RUN yarn global add pm2
 
 EXPOSE 8080
 EXPOSE 8000
