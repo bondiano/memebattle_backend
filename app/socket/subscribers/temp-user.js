@@ -8,9 +8,9 @@ const observer = ({type, ...data}) => {
         return errorHandler(data);
     }
     try {
-        tempUserHandler[type](data);
+        return tempUserHandler[type](data);
     } catch(err) {
-        errorHandler({...data, err});
+        return errorHandler({...data, err});
     }
 };
 
