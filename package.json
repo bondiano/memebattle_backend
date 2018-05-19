@@ -11,6 +11,9 @@
     "migrate": "node_modules/.bin/sequelize db:migrate",
     "sequelize": "node_modules/.bin/sequelize"
   },
+  "pre-commit": [
+    "lint"
+  ],
   "dependencies": {
     "basic-auth-connect": "^1.0.0",
     "bcrypt-nodejs": "^0.0.3",
@@ -37,7 +40,8 @@
   "devDependencies": {
     "babel-eslint": "^8.2.3",
     "eslint": "^4.19.1",
-    "pm2": "^2.10.3"
+    "pm2": "^2.10.3",
+    "pre-commit": "^1.2.2"
   },
   "repository": {
     "type": "git",

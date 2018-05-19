@@ -2,11 +2,11 @@ const extractValidationType = (_errors) => {
     let errors;
 
     if(_errors.errors) { // For sequalize errors
-        errors = _errors.errors
+        errors = _errors.errors;
     }
 
     if(_errors.details) { // For JOI errors
-        errors = _errors.details
+        errors = _errors.details;
     }
 
     return errors && errors
