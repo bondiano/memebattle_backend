@@ -1,4 +1,4 @@
-const tempUser = require('./temp-user.service');
+const tempUser = require('./tempUser.service');
 
 module.exports = {
     tempUser,

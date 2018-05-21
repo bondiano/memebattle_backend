@@ -1,4 +1,4 @@
-const tempUser = require('./temp-user');
+const tempUser = require('./tempUser');
 
 module.exports = {
     tempUser,

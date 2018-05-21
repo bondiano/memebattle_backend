@@ -1,4 +1,4 @@
-const tempUser = require('./temp-user.repo');
+const tempUser = require('./tempUser.repository');
 
 module.exports = {
     tempUser,

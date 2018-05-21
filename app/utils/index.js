@@ -1,5 +1,5 @@
 const crypt = require('./crypt');
-const extractValidationType = require('./extract-validation-type');
+const extractValidationType = require('./extractValidationType');
 
 module.exports = {
     crypt,
