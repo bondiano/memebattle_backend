@@ -5,7 +5,12 @@
 ## Build Setup
 
 ``` bash
-# For start Docker container
+# Copy .env file
+cp .env.dist .env
+# And edit it
+nano .env
+# For start Docker container use
 make start
-
+# After for migrate use
+make migrate
 ```

@@ -5,5 +5,5 @@ module.exports = {
     port: process.env.REDIS_PORT,
     family: process.env.REDIS_FAMILY,
     password: process.env.REDIS_PASSWORD,
-    db: process.env.REDIS_DB
+    db: process.env.REDIS_DB,
 };

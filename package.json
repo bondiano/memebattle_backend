@@ -2,34 +2,46 @@
   "name": "memebattle_back",
   "version": "1.0.0",
   "description": "Backend for membattle project",
-  "main": "app.js",
+  "main": "./app",
   "scripts": {
-    "dev": "nodemon --inspect ./app/bin/server.js -host 0.0.0.0",
-    "start": "node ./app/bin/server.js",
-    "migrate": "node ./app/migrations",
-    "lint": "eslint ./app"
+    "dev": "pm2 startOrRestart ecosystem.config.js --env development",
+    "start-stage": "pm2 startOrRestart ecosystem.config.js --env stage",
+    "start-prod": "pm2 startOrRestart ecosystem.config.js --env production",
+    "lint": "node_modules/.bin/eslint ./app",
+    "migrate": "node_modules/.bin/sequelize db:migrate",
+    "sequelize": "node_modules/.bin/sequelize"
   },
+  "pre-commit": [
+    "lint"
+  ],
   "dependencies": {
+    "basic-auth-connect": "^1.0.0",
+    "bcrypt-nodejs": "^0.0.3",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
     "dotenv": "^5.0.0",
     "express": "^4.16.2",
-    "express-validator": "^5.2.0",
-    "helmet": "^3.12.0",
     "ioredis": "^3.2.2",
+    "joi": "^13.3.0",
     "kue": "^0.11.6",
     "kue-scheduler": "^0.7.4",
     "lodash": "^4.17.10",
+    "module-alias": "^2.0.6",
     "nodemon": "^1.17.1",
     "pg": "^7.4.1",
     "pg-hstore": "^2.3.2",
     "rxjs": "^6.1.0",
+    "rxjs-compat": "^6.1.0",
     "sequelize": "^4.37.5",
-    "socket.io": "^2.1.0"
+    "sequelize-cli": "^4.0.0",
+    "socket.io": "^2.1.0",
+    "uuid": "^3.2.1"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",
-    "eslint": "^4.19.1"
+    "eslint": "^4.19.1",
+    "pm2": "^2.10.3",
+    "pre-commit": "^1.2.2"
   },
   "repository": {
     "type": "git",
@@ -42,6 +54,16 @@
     "redis",
     "postgre"
   ],
+  "_moduleAliases": {
+    "@root": "./app",
+    "@services": "./app/services",
+    "@models": "./app/database/models",
+    "@controllers": "./app/controllers",
+    "@repo": "./app/repositories",
+    "@jobs": "./app/jobs",
+    "@config": "./app/config",
+    "@utils": "./app/utils"
+  },
   "author": "membattle",
   "license": "ISC",
   "bugs": {

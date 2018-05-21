@@ -1,5 +1,5 @@
 const Router = require('express').Router();
-const authController = require('../controllers/auth.controller');
+const { auth: authController } = require('@controllers');
 
 Router.get('/provider/:provider', authController.socialNetwork);
 

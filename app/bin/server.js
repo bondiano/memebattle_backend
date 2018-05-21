@@ -1,10 +1,9 @@
-require('dotenv').config();
+require('module-alias/register');
 
-const { HTTP_PORT } = require('../config/config');
+const { config: { REST_PORT, HOST } } = require('@config');
 
 const express = require('express');
-const server = express();
-const { kue } = require('../bootstrap/kue');
+const app = express();
 
 /* Middleware init section */
 const cors = require('cors');
@@ -12,17 +11,21 @@ const bodyParser = require('body-parser');
 const { customResponses } = require('../middlewares');
 
 /* Middleware use section */
-server.use(cors());
-server.use(kue.app);
-server.use(bodyParser.json());
-server.use(customResponses);
+app.use(cors());
+app.use(bodyParser.json());
+app.use(customResponses);
 
 /* Init router */
 const Router = require('../routes');
 
 /* Set up server routes */
-server.use('/', Router);
+app.use('/', Router);
 
-server.listen(HTTP_PORT, () => {
-    console.log(`App listening on port ${HTTP_PORT}!`);
+const server = app.listen(REST_PORT, HOST, () => {
+    console.log(`REST server listening on port ${REST_PORT}!`); //eslint-disable-line
 });
+
+module.exports = {
+    app,
+    server,
+};

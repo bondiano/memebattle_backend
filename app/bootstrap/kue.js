@@ -1,13 +1,21 @@
 const kue = require('kue-scheduler');
-const redis = require('../config/redis');
+
+const {
+    redis: { port, host, password, family },
+    kue: { db },
+} = require('@config');
+
+const redis = {
+    port, host, password, family, db,
+};
 
 const queue = kue.createQueue({
     skipConfig: false,
     redis,
-    restore: true
+    restore: true,
 });
 
 module.exports = {
     queue,
-    kue
+    kue,
 };

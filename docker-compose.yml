@@ -5,9 +5,12 @@ services:
     build: .
     container_name: meme_nodejs
     volumes:
-      - ./:/var/www/backend
+      - ./app:/var/www/backend/app
+      - ./node_modules:/var/www/node_modules
     ports:
-      - 8080:8080
+      - 8000:8000 # SOCKET
+      - 8001:8001 # KUE
+      - 8080:8080 # REST
     networks:
       - app
     depends_on:
@@ -31,7 +34,7 @@ services:
     image: redis:3.2
     container_name: meme_redis
     volumes:
-      - ./docker/data/:/data/redis
+      - ./docker/data/redis:/data/redis
     ports:
       - "6379:6379"
     networks:
