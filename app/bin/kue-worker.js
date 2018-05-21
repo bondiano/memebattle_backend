@@ -22,7 +22,7 @@ Queue.process('deferRemoveTempUser', ({data}, done) => {
                 }
                 if(job.data.user.id === data.user.id) {
                     job.remove();
-                    tempUserJobs.RemoveTempUser(data.user);
+                    tempUserJobs.removeTempUser(data.user);
                 }
             });
         });

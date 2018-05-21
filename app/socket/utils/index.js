@@ -1,7 +1,7 @@
 const validatorOperator = require('./validator.operator');
-const extendWithOperator = require('./extend-with.operator');
-const handlerRegister = require('./handler-register');
-const applyHandlers = require('./apply-handlers');
+const extendWithOperator = require('./extendWith.operator');
+const handlerRegister = require('./handlerRegister');
+const applyHandlers = require('./applyHandlers');
 
 module.exports = {
     validatorOperator,

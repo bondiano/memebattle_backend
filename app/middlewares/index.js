@@ -1,4 +1,4 @@
-const customResponses = require('./custom-responses');
+const customResponses = require('./customResponses');
 
 module.exports = {
     customResponses,

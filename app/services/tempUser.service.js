@@ -9,7 +9,7 @@ const createTempUser = async (identifier, socketId) => {
     const user = await tempUserModel.create({token: cryptedToken, socketId});
 
     // Create worker for delete temp user
-    tempUserJob.RemoveTempUser(user);
+    tempUserJob.removeTempUser(user);
     return user.save();
 };
 
@@ -17,7 +17,7 @@ const updateUserSocketId = async (identifier, socketId) => {
     const user = await tempUserRepo.getById(identifier);
 
     // Update worker for delete temp user
-    tempUserJob.DeferRemoveTempUser(user);
+    tempUserJob.deferRemoveTempUser(user);
     return user
         .update({ socketId });
 };
