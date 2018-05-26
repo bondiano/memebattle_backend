@@ -1,11 +1,17 @@
-language: node_js
+sudo: required
+dist: trusty
 
-os:
-  - linux
-  - osx
+branches:
+  only:
+    - master
+    - develop
 
-node_js:
-  - "9"
+services:
+  - docker
 
-script:
-  - npm run lint
+jobs:
+  include:
+    - stage: build docker image
+      script: docker -v
+    - stage: push
+      script: docker-compose -v
